@@ -3818,545 +3818,514 @@ def api_content_ai_list():
 
 
 # -- 콘텐츠 AI 페이지 HTML ------------------------------------------
-CONTENT_AI_HTML = """<!DOCTYPE html>
+CONTENT_AI_HTML = """
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>콘텐츠 AI - 팝성형외과</title>
+<title>POP 콘텐츠 AI</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI','Noto Sans KR',sans-serif;background:#FAFAF8;color:#1A1A1A}
-.nav{background:#1a1a2e;display:flex;padding:0 24px;position:sticky;top:0;z-index:100}
-.nav a{padding:13px 20px;font-size:13px;color:#a0a0c0;text-decoration:none;border-bottom:3px solid transparent}
-.nav a:hover{color:#C9956C}.nav a.on{color:#C9956C;border-bottom-color:#C9956C}
-.header{background:linear-gradient(135deg,#C9956C,#E8927C);color:#fff;padding:24px 40px}
-.header h1{font-size:22px;font-weight:700}
-.header p{font-size:13px;opacity:.85;margin-top:4px}
-.wrap{max-width:1200px;margin:0 auto;padding:28px 24px}
-.tabs{display:flex;gap:4px;background:#fff;border-radius:10px;padding:4px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:24px;width:fit-content}
-.tab{padding:8px 20px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:#6b7280}
-.tab.on{background:#C9956C;color:#fff}
+body{font-family:'Segoe UI','Noto Sans KR',sans-serif;background:#0f0f1a;color:#fff;min-height:100vh}
+.header{background:linear-gradient(135deg,#1a1a2e,#16213e);padding:20px 32px;border-bottom:1px solid #2a2a3e}
+.header h1{font-size:20px;font-weight:700;background:linear-gradient(90deg,#C9956C,#E8927C);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{font-size:12px;color:#6b7280;margin-top:4px}
+.tabs{display:flex;gap:4px;padding:16px 32px;background:#0f0f1a;border-bottom:1px solid #1a1a2e;overflow-x:auto}
+.tab{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:#1a1a2e;color:#9ca3af;white-space:nowrap;transition:all .2s}
+.tab:hover{background:#2a2a3e;color:#fff}
+.tab.on{background:linear-gradient(135deg,#C9956C,#E8927C);color:#fff}
+.main{display:flex;gap:0;height:calc(100vh - 115px)}
+.sidebar{width:300px;min-width:300px;background:#1a1a2e;padding:20px;border-right:1px solid #2a2a3e;overflow-y:auto}
+.results{flex:1;padding:20px;overflow-y:auto;background:#0f0f1a}
 .panel{display:none}.panel.on{display:block}
-.grid{display:grid;grid-template-columns:320px 1fr;gap:20px}
-.card{background:#fff;border-radius:14px;padding:24px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
-.card h3{font-size:15px;font-weight:700;margin-bottom:16px;color:#1A1A1A}
-.form-group{margin-bottom:14px}
-label{font-size:12px;font-weight:600;color:#6b7280;display:block;margin-bottom:6px}
-select,input[type=text]{width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;color:#1A1A1A}
+h3{font-size:14px;font-weight:700;color:#C9956C;margin-bottom:16px;text-transform:uppercase;letter-spacing:.05em}
+.form-group{margin-bottom:16px}
+label{font-size:12px;color:#9ca3af;display:block;margin-bottom:6px;font-weight:500}
+select,input[type=text]{width:100%;padding:9px 12px;border-radius:8px;border:1px solid #2a2a3e;background:#0f0f1a;color:#fff;font-size:13px;outline:none}
+select:focus,input:focus{border-color:#C9956C}
 .radio-group{display:flex;flex-direction:column;gap:8px}
-.radio-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid #e5e7eb;border-radius:8px;cursor:pointer;transition:all .2s}
-.radio-item.on{border-color:#C9956C;background:#fff8f5}
+.radio-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid #2a2a3e;cursor:pointer;transition:all .2s}
+.radio-item:hover{border-color:#C9956C}
+.radio-item.on{border-color:#C9956C;background:#C9956C15}
 .radio-item input{accent-color:#C9956C}
-.btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:8px}
-.btn-main{background:linear-gradient(135deg,#C9956C,#E8927C);color:#fff}
-.btn-main:hover{opacity:.9}
-.btn-main:disabled{background:#d1d5db;cursor:not-allowed}
-.result-area{min-height:400px}
-.result-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:#9ca3af;font-size:14px;gap:8px}
-.keyword-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
-.badge{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;background:#fff8f5;color:#C9956C;border:1px solid #f4d4c0}
-.title-tabs{display:flex;gap:4px;margin-bottom:8px}
-.ttab{padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;border:1px solid #e5e7eb;background:#fff;color:#6b7280}
-.ttab.on{background:#C9956C;color:#fff;border-color:#C9956C}
-.script-box{background:#f9fafb;border-radius:10px;padding:16px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:400px;overflow-y:auto;margin-bottom:12px}
-.copy-btn{padding:6px 14px;background:#1a1a2e;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer}
-.copy-btn:hover{background:#2d2d4e}
-.shortform-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-.sf-card{background:#f9fafb;border-radius:10px;padding:12px;font-size:12px;line-height:1.7}
-.sf-title{font-weight:700;font-size:11px;color:#C9956C;margin-bottom:6px}
+.radio-label{font-size:13px;font-weight:600;color:#fff}
+.radio-sub{font-size:11px;color:#6b7280}
+.btn{width:100%;padding:11px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:linear-gradient(135deg,#C9956C,#E8927C);color:#fff;margin-top:8px;transition:all .2s}
+.btn:hover{opacity:.9}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:#4b5563;gap:12px}
+.empty-icon{font-size:48px;opacity:.5}
+.card{background:#1a1a2e;border:1px solid #2a2a3e;border-radius:12px;padding:20px;margin-bottom:16px;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+.badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-cat{background:#C9956C20;color:#C9956C;border:1px solid #C9956C40}
+.badge-type{background:#4f46e520;color:#818cf8;border:1px solid #4f46e540}
+.badge-angle{background:#c026d320;color:#e879f9;border:1px solid #c026d340}
+.badge-time{color:#4b5563;font-size:11px;align-self:center}
+.close-btn{background:none;border:none;color:#4b5563;font-size:16px;cursor:pointer;padding:4px;line-height:1}
+.close-btn:hover{color:#9ca3af}
+.section{margin-bottom:14px}
+.section-title{font-size:11px;font-weight:700;color:#C9956C;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.script-box{background:#0f0f1a;border-radius:8px;padding:14px;font-size:12px;line-height:2;color:#d1d5db;white-space:pre-wrap;max-height:250px;overflow-y:auto;border:1px solid #2a2a3e}
+.title-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.title-label{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;flex-shrink:0}
+.label-seo{background:#3b82f620;color:#60a5fa}
+.label-cur{background:#f5940020;color:#fb923c}
+.label-emp{background:#10b98120;color:#34d399}
+.title-text{font-size:13px;color:#f3f4f6}
+.copy-btn{padding:3px 10px;border-radius:6px;font-size:11px;cursor:pointer;border:1px solid #2a2a3e;background:#0f0f1a;color:#9ca3af;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.copy-btn:hover{border-color:#C9956C;color:#C9956C}
+.copy-btn.copied{background:#16a34a;border-color:#16a34a;color:#fff}
+.sf-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sf-card{background:#0f0f1a;border:1px solid #2a2a3e;border-radius:8px;padding:12px}
+.sf-num{font-size:11px;font-weight:700;color:#C9956C;margin-bottom:4px}
+.sf-hook{font-size:12px;font-weight:600;color:#e879f9;margin-bottom:6px;padding:5px 8px;background:#c026d310;border-radius:6px}
+.sf-script{font-size:11px;line-height:1.9;color:#d1d5db;white-space:pre-wrap}
 .hashtags{display:flex;flex-wrap:wrap;gap:4px}
-.htag{padding:3px 10px;background:#f0f9ff;color:#0ea5e9;border-radius:20px;font-size:11px;cursor:pointer}
-.htag:hover{background:#bae6fd}
-.upload-area{border:2px dashed #e5e7eb;border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:14px}
-.upload-area:hover{border-color:#C9956C;background:#fff8f5}
-.upload-area img{max-width:200px;max-height:200px;border-radius:8px;object-fit:cover}
-.face-result{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-.face-card{background:#f9fafb;border-radius:10px;padding:14px}
-.face-card h4{font-size:12px;font-weight:700;color:#C9956C;margin-bottom:6px}
-.timeline{display:flex;flex-direction:column;gap:8px}
-.tl-item{display:flex;gap:10px;align-items:flex-start}
-.tl-time{font-size:11px;font-weight:700;color:#C9956C;min-width:60px;padding-top:2px}
-.tl-text{font-size:13px;line-height:1.6;color:#374151}
-.rec-cards{display:flex;flex-direction:column;gap:12px}
-.rec-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.rec-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:#C9956C;color:#fff;border-radius:50%;font-size:12px;font-weight:700;margin-right:8px}
-.rec-title{font-size:14px;font-weight:700;color:#1A1A1A;margin-bottom:8px}
-.rec-hook{font-size:13px;color:#C9956C;font-weight:600;margin-bottom:8px;padding:6px 10px;background:#fff8f5;border-radius:6px}
-.rec-points{font-size:13px;color:#374151;margin-bottom:10px;line-height:1.8}
-.script-toggle{font-size:12px;color:#6b7280;cursor:pointer;margin-bottom:6px}
-.script-toggle:hover{color:#C9956C}
-.rec-script{display:none;background:#f9fafb;border-radius:8px;padding:12px;font-size:12px;line-height:1.8;white-space:pre-wrap}
-.loading{display:flex;align-items:center;justify-content:center;gap:10px;padding:60px;color:#9ca3af;font-size:14px}
-/* 단계 체크 */
-.stage-bar{display:flex;gap:4px;margin-top:12px;flex-wrap:wrap}
-.stage-btn{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#6b7280;cursor:pointer;transition:all .2s}
-.stage-btn.done{background:#1a1a2e;color:#fff;border-color:#1a1a2e}
-.stage-btn.current{background:#C9956C;color:#fff;border-color:#C9956C}
-.spinner{width:24px;height:24px;border:3px solid #f3f4f6;border-top-color:#C9956C;border-radius:50%;animation:spin .8s linear infinite}
+.htag{padding:3px 8px;border-radius:12px;font-size:11px;cursor:pointer;background:#1a1a2e;color:#9ca3af;border:1px solid #2a2a3e;transition:all .2s}
+.htag:hover{border-color:#C9956C;color:#C9956C}
+.lang-block{background:#0f0f1a;border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid #2a2a3e}
+.lang-title{font-size:12px;font-weight:700;margin-bottom:8px}
+.lang-label{font-size:12px;font-weight:600;color:#d1d5db;margin-bottom:4px}
+.lang-sub{font-size:11px;color:#6b7280;margin-bottom:6px}
+.stage-bar{display:flex;gap:4px;margin-top:14px;flex-wrap:wrap;padding-top:14px;border-top:1px solid #2a2a3e}
+.stage-btn{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid #2a2a3e;background:#0f0f1a;color:#6b7280;cursor:pointer;transition:all .2s}
+.stage-btn:hover{border-color:#C9956C;color:#C9956C}
+.stage-btn.done{background:#16a34a;border-color:#16a34a;color:#fff}
+.stage-btn.current{background:#C9956C;border-color:#C9956C;color:#fff}
+.loading-card{background:#1a1a2e;border:1px solid #2a2a3e;border-radius:12px;padding:30px;margin-bottom:16px;display:flex;align-items:center;gap:14px;color:#9ca3af}
+.spinner{width:20px;height:20px;border:2px solid #2a2a3e;border-top-color:#C9956C;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
+.expand-btn{font-size:11px;color:#6b7280;cursor:pointer;padding:4px 0;transition:color .2s}
+.expand-btn:hover{color:#C9956C}
+.expandable{display:none;margin-top:8px}
+.counter{font-size:12px;color:#6b7280;margin-bottom:12px}
+.clear-btn{float:right;padding:3px 10px;border-radius:6px;font-size:11px;cursor:pointer;border:1px solid #2a2a3e;background:#0f0f1a;color:#6b7280}
+.clear-btn:hover{border-color:#ef4444;color:#ef4444}
+.upload-area{border:2px dashed #2a2a3e;border-radius:8px;padding:20px;text-align:center;cursor:pointer;margin-bottom:12px;transition:all .2s}
+.upload-area:hover{border-color:#C9956C;background:#C9956C08}
+.upload-area img{max-width:100%;max-height:160px;border-radius:6px}
+.face-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.face-box{background:#0f0f1a;border:1px solid #2a2a3e;border-radius:8px;padding:12px}
+.face-box-title{font-size:10px;font-weight:700;color:#C9956C;margin-bottom:6px;text-transform:uppercase}
+.face-box-val{font-size:14px;font-weight:700;color:#f3f4f6;margin-bottom:4px}
+.face-box-sub{font-size:11px;color:#9ca3af;line-height:1.6}
+.timeline{display:flex;flex-direction:column;gap:8px}
+.tl-row{display:flex;gap:10px;align-items:flex-start}
+.tl-time{font-size:12px;font-weight:700;color:#C9956C;min-width:55px;padding-top:2px}
+.tl-text{font-size:12px;color:#d1d5db;line-height:1.8}
+.err-card{background:#1a1a2e;border:1px solid #ef444440;border-radius:12px;padding:16px;margin-bottom:16px;color:#f87171;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.history-table{width:100%;border-collapse:collapse;font-size:13px}
+.history-table th{padding:10px 12px;text-align:left;color:#6b7280;font-weight:600;border-bottom:1px solid #2a2a3e}
+.history-table td{padding:10px 12px;border-bottom:1px solid #1a1a2e;color:#d1d5db}
+.history-table tr:hover td{background:#1a1a2e10}
 </style>
 </head>
 <body>
-<div class="nav">
-  <a href="/">홈</a>
-  <a href="/blog">블로그</a>
-  <a href="/youtube">유튜브</a>
-  <a href="/magazine">매거진</a>
-  <a href="/sov">노출 점유율</a>
-  <a href="/content_ai" class="on">콘텐츠 AI</a>
-</div>
 <div class="header">
-  <h1>POP 콘텐츠 AI</h1>
-  <p>유튜브 스크립트 / 얼굴형 분석 릴스 / 키워드 릴스 주제 추천</p>
+  <h1>🎬 POP 콘텐츠 AI</h1>
+  <p>팝성형외과 콘텐츠 자동 생성 시스템</p>
 </div>
-<div class="wrap">
-  <div class="tabs">
-    <button class="tab on" onclick="switchTab('youtube',this)">🎬 유튜브 스크립트</button>
-    <button class="tab" onclick="switchTab('shorts',this)">⚡ 숏츠 10개 생성</button>
-    <button class="tab" onclick="switchTab('face',this)">👤 얼굴형 분석</button>
-    <button class="tab" onclick="switchTab('keyword',this)">🔑 키워드 릴스</button>
-    <button class="tab" onclick="switchTab('history',this);loadHistory()">📋 히스토리</button>
-  </div>
+<div class="tabs">
+  <button class="tab on" onclick="switchTab('youtube',this)">🎬 유튜브 스크립트</button>
+  <button class="tab" onclick="switchTab('shorts',this)">⚡ 숏츠 10개</button>
+  <button class="tab" onclick="switchTab('face',this)">👤 얼굴형 분석</button>
+  <button class="tab" onclick="switchTab('keyword',this)">🔑 키워드 릴스</button>
+  <button class="tab" onclick="switchTab('history',this);loadHistory()">📋 히스토리</button>
+</div>
+<div class="main">
 
   <!-- 유튜브 스크립트 -->
-  <div class="panel on" id="panel-youtube">
-    <div class="grid">
-      <div class="card">
-        <h3>설정</h3>
-        <div class="form-group">
-          <label>카테고리</label>
-          <select id="yt-category">
-            <option>눈성형</option>
-            <option>코성형</option>
-            <option>리프팅</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>영상 유형</label>
-          <div class="radio-group">
-            <label class="radio-item on" onclick="selectRadio(this,'yt-type-group')">
-              <input type="radio" name="yt-type" value="롱폼 3분" checked> 
-              <div><div style="font-weight:600;font-size:13px">롱폼 3분</div><div style="font-size:11px;color:#9ca3af">YouTube 메인 콘텐츠</div></div>
-            </label>
-            <label class="radio-item" onclick="selectRadio(this,'yt-type-group')">
-              <input type="radio" name="yt-type" value="숏폼 30초">
-              <div><div style="font-weight:600;font-size:13px">숏폼 30초</div><div style="font-size:11px;color:#9ca3af">Shorts / Reels</div></div>
-            </label>
-          </div>
-        </div>
-        <button class="btn btn-main" id="yt-btn" onclick="generateYoutube()">🎬 스크립트 생성</button>
+  <div class="panel on" id="panel-youtube" style="display:flex;width:100%">
+    <div class="sidebar">
+      <h3>설정</h3>
+      <div class="form-group">
+        <label>카테고리</label>
+        <select id="yt-cat">
+          <option>눈성형</option><option>코성형</option><option>리프팅</option>
+          <option>윤곽</option><option>지방이식</option>
+        </select>
       </div>
-      <div class="card" style="overflow-y:auto;max-height:85vh">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-          <div style="font-size:14px;font-weight:700;color:#1A1A1A">생성된 스크립트 <span id="yt-count" style="color:#C9956C"></span></div>
-          <button onclick="document.getElementById('yt-list').innerHTML='';document.getElementById('yt-count').textContent=''" style="padding:4px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:11px;cursor:pointer;background:#fff">전체 삭제</button>
-        </div>
-        <div id="yt-list">
-          <div class="result-empty" style="padding:40px">
-            <div style="font-size:32px">🎬</div>
-            <div>좌측 설정 후 "스크립트 생성" 클릭</div>
-          </div>
+      <div class="form-group">
+        <label>영상 유형</label>
+        <div class="radio-group">
+          <label class="radio-item on" id="radio-longform">
+            <input type="radio" name="yt-type" value="롱폼" checked>
+            <div><div class="radio-label">롱폼 3분</div><div class="radio-sub">YouTube 메인 콘텐츠</div></div>
+          </label>
+          <label class="radio-item" id="radio-shortform">
+            <input type="radio" name="yt-type" value="숏폼 30초">
+            <div><div class="radio-label">숏폼 30초</div><div class="radio-sub">Shorts / Reels</div></div>
+          </label>
         </div>
       </div>
+      <button class="btn" id="yt-btn" onclick="generateYoutube()">🎬 스크립트 생성</button>
+    </div>
+    <div class="results">
+      <div id="yt-counter" class="counter" style="display:none"></div>
+      <div id="yt-list"><div class="empty"><div class="empty-icon">🎬</div><div>설정 후 스크립트 생성 클릭</div></div></div>
+    </div>
+  </div>
+
+  <!-- 숏츠 10개 -->
+  <div class="panel" id="panel-shorts" style="display:none;width:100%">
+    <div class="sidebar">
+      <h3>설정</h3>
+      <div class="form-group">
+        <label>생성 개수</label>
+        <select id="shorts-num">
+          <option value="10">10개</option>
+          <option value="5">5개</option>
+          <option value="20">20개</option>
+        </select>
+      </div>
+      <div style="background:#C9956C10;border:1px solid #C9956C30;border-radius:8px;padding:12px;margin-bottom:12px;font-size:12px;color:#9ca3af;line-height:1.7">
+        ✨ 기존 주제와 중복되지 않는 새로운 주제로 자동 생성돼요.
+      </div>
+      <button class="btn" id="shorts-btn" onclick="generateShorts()">⚡ 숏츠 생성</button>
+    </div>
+    <div class="results">
+      <div id="shorts-counter" class="counter" style="display:none"></div>
+      <div id="shorts-list"><div class="empty"><div class="empty-icon">⚡</div><div>버튼 클릭 시 중복 없이 생성</div></div></div>
     </div>
   </div>
 
   <!-- 얼굴형 분석 -->
-  <div class="panel" id="panel-face">
-    <div class="grid">
-      <div class="card">
-        <h3>설정</h3>
-        <div class="form-group">
-          <label>분석 모드</label>
-          <div class="radio-group">
-            <label class="radio-item" onclick="selectFaceMode('celebrity',this)">
-              <input type="radio" name="face-mode" value="celebrity">
-              <div><div style="font-weight:600;font-size:13px">연예인 얼굴분석</div><div style="font-size:11px;color:#9ca3af">얼굴 미학 분석 콘텐츠</div></div>
-            </label>
-            <label class="radio-item on" onclick="selectFaceMode('concern',this)">
-              <input type="radio" name="face-mode" value="concern" checked>
-              <div><div style="font-weight:600;font-size:13px">고민형 분석</div><div style="font-size:11px;color:#9ca3af">고민 해결 교육 콘텐츠</div></div>
-            </label>
-          </div>
-        </div>
-        <div id="celebrity-input" style="display:none" class="form-group">
-          <label>인물명 (선택)</label>
-          <input type="text" id="person-name" placeholder="예: 장원영">
-        </div>
-        <div id="concern-input" class="form-group">
-          <label>고민 부위</label>
-          <select id="concern-area">
-            <option>눈</option><option>코</option><option>리프팅</option><option>전체</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>이미지 업로드</label>
-          <div class="upload-area" id="upload-area" onclick="document.getElementById('face-img').click()">
-            <input type="file" id="face-img" accept="image/*" style="display:none" onchange="previewImage(this)">
-            <div id="upload-placeholder">
-              <div style="font-size:32px;margin-bottom:8px">📷</div>
-              <div style="font-size:13px;color:#9ca3af">클릭하여 이미지 업로드</div>
-            </div>
-          </div>
-        </div>
-        <button class="btn btn-main" id="face-btn" onclick="generateFace()">👤 분석 시작</button>
-      </div>
-      <div class="card" style="overflow-y:auto;max-height:85vh">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-          <div style="font-size:14px;font-weight:700;color:#1A1A1A">분석 결과 <span id="face-count" style="color:#C9956C"></span></div>
-          <button onclick="document.getElementById('face-list').innerHTML='';document.getElementById('face-count').textContent=''" style="padding:4px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:11px;cursor:pointer;background:#fff">전체 삭제</button>
-        </div>
-        <div id="face-list">
-          <div class="result-empty" style="padding:40px">
-            <div style="font-size:32px">👤</div>
-            <div>이미지 업로드 후 "분석 시작" 클릭</div>
-          </div>
+  <div class="panel" id="panel-face" style="display:none;width:100%">
+    <div class="sidebar">
+      <h3>설정</h3>
+      <div class="form-group">
+        <label>분석 모드</label>
+        <div class="radio-group">
+          <label class="radio-item on" id="radio-concern" onclick="setFaceMode('concern',this)">
+            <input type="radio" name="face-mode" value="concern" checked>
+            <div><div class="radio-label">고민형</div><div class="radio-sub">고민 부위 중심 분석</div></div>
+          </label>
+          <label class="radio-item" id="radio-celebrity" onclick="setFaceMode('celebrity',this)">
+            <input type="radio" name="face-mode" value="celebrity">
+            <div><div class="radio-label">연예인 분석</div><div class="radio-sub">얼굴 변화 분석</div></div>
+          </label>
         </div>
       </div>
+      <div id="concern-input" class="form-group">
+        <label>고민 부위</label>
+        <select id="concern-area"><option>눈</option><option>코</option><option>입술</option><option>윤곽</option><option>피부</option></select>
+      </div>
+      <div id="celebrity-input" class="form-group" style="display:none">
+        <label>인물명</label>
+        <input type="text" id="person-name" placeholder="예: 아이유">
+      </div>
+      <div class="form-group">
+        <label>이미지 업로드</label>
+        <div class="upload-area" onclick="document.getElementById('face-img').click()" id="upload-placeholder">
+          <div style="font-size:32px">📷</div>
+          <div style="font-size:12px;color:#6b7280;margin-top:8px">클릭하여 이미지 선택</div>
+        </div>
+        <input type="file" id="face-img" accept="image/*" style="display:none" onchange="previewFaceImage(this)">
+      </div>
+      <button class="btn" id="face-btn" onclick="generateFace()">👤 분석 시작</button>
     </div>
-  </div>
-
-  <!-- 숏츠 10개 배치 생성 -->
-  <div class="panel" id="panel-shorts">
-    <div class="grid">
-      <div class="card">
-        <h3>설정</h3>
-        <div class="form-group">
-          <label>생성 개수</label>
-          <select id="shorts-count-select">
-            <option value="10">10개</option>
-            <option value="5">5개</option>
-            <option value="20">20개</option>
-          </select>
-        </div>
-        <div style="background:#fff8f5;border-radius:10px;padding:12px;margin-bottom:14px;font-size:12px;color:#6b7280;line-height:1.7">
-          <div style="font-weight:700;color:#C9956C;margin-bottom:4px">✨ 스마트 중복 방지</div>
-          기존에 생성된 주제를 자동으로 파악해서 겹치지 않는 새로운 주제로 생성해요.
-        </div>
-        <button class="btn btn-main" id="shorts-btn" onclick="generateShorts()">⚡ 숏츠 생성</button>
-      </div>
-      <div class="card" style="overflow-y:auto;max-height:85vh">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-          <div style="font-size:14px;font-weight:700;color:#1A1A1A">생성된 숏츠 <span id="shorts-count" style="color:#C9956C"></span></div>
-          <button onclick="document.getElementById('shorts-list').innerHTML='';document.getElementById('shorts-count').textContent=''" style="padding:4px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:11px;cursor:pointer;background:#fff">전체 삭제</button>
-        </div>
-        <div id="shorts-list">
-          <div class="result-empty" style="padding:40px">
-            <div style="font-size:32px">⚡</div>
-            <div>버튼 클릭 시 중복 없이 숏츠 생성</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 히스토리 -->
-  <div class="panel" id="panel-history">
-    <div class="card">
-      <h3>📋 생성 히스토리</h3>
-      <div id="history-list" style="margin-top:16px">
-        <div class="loading">히스토리 로딩 중...</div>
-      </div>
+    <div class="results">
+      <div id="face-counter" class="counter" style="display:none"></div>
+      <div id="face-list"><div class="empty"><div class="empty-icon">👤</div><div>이미지 업로드 후 분석 시작</div></div></div>
     </div>
   </div>
 
   <!-- 키워드 릴스 -->
-  <div class="panel" id="panel-keyword">
-    <div class="grid">
-      <div class="card">
-        <h3>설정</h3>
-        <div class="form-group">
-          <label>키워드 입력</label>
-          <input type="text" id="kw-input" placeholder="예: 쌍꺼풀 재수술">
-        </div>
-        <div class="form-group">
-          <label>카테고리</label>
-          <select id="kw-category">
-            <option>전체</option>
-            <option>눈성형</option>
-            <option>코성형</option>
-            <option>리프팅</option>
-          </select>
-        </div>
-        <button class="btn btn-main" id="kw-btn" onclick="generateKeyword()">🔑 주제 추천받기</button>
+  <div class="panel" id="panel-keyword" style="display:none;width:100%">
+    <div class="sidebar">
+      <h3>설정</h3>
+      <div class="form-group">
+        <label>키워드</label>
+        <input type="text" id="kw-input" placeholder="예: 쌍꺼풀 수술">
       </div>
-      <div class="card" style="overflow-y:auto;max-height:85vh">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-          <div style="font-size:14px;font-weight:700;color:#1A1A1A">추천 결과 <span id="kw-count" style="color:#C9956C"></span></div>
-          <button onclick="document.getElementById('kw-list').innerHTML='';document.getElementById('kw-count').textContent=''" style="padding:4px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:11px;cursor:pointer;background:#fff">전체 삭제</button>
-        </div>
-        <div id="kw-list">
-          <div class="result-empty" style="padding:40px">
-            <div style="font-size:32px">🔑</div>
-            <div>키워드 입력 후 "주제 추천받기" 클릭</div>
-          </div>
-        </div>
+      <div class="form-group">
+        <label>카테고리</label>
+        <select id="kw-cat">
+          <option>눈성형</option><option>코성형</option><option>리프팅</option><option>윤곽</option>
+        </select>
       </div>
+      <button class="btn" id="kw-btn" onclick="generateKeyword()">🔑 주제 추천</button>
+    </div>
+    <div class="results">
+      <div id="kw-counter" class="counter" style="display:none"></div>
+      <div id="kw-list"><div class="empty"><div class="empty-icon">🔑</div><div>키워드 입력 후 추천 클릭</div></div></div>
     </div>
   </div>
+
+  <!-- 히스토리 -->
+  <div class="panel" id="panel-history" style="display:none;width:100%;flex-direction:column">
+    <div class="results" style="width:100%">
+      <div id="history-content"><div class="empty"><div class="empty-icon">📋</div><div>로딩 중...</div></div></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
+const STAGES = ['생성완료','촬영완료','편집완료','업로드예정','업로드완료'];
 let faceMode = 'concern';
-let faceImageB64 = '';
-let faceMediaType = 'image/jpeg';
+let faceB64 = '';
+let faceType = 'image/jpeg';
 
 function switchTab(id, btn) {
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
   btn.classList.add('on');
-  document.getElementById('panel-'+id).classList.add('on');
+  document.querySelectorAll('.panel').forEach(p => {
+    p.style.display = 'none';
+    p.classList.remove('on');
+  });
+  const panel = document.getElementById('panel-' + id);
+  panel.style.display = 'flex';
+  panel.classList.add('on');
 }
 
-function selectRadio(el, group) {
-  el.closest('.radio-group').querySelectorAll('.radio-item').forEach(i=>i.classList.remove('on'));
-  el.classList.add('on');
-}
-
-function selectFaceMode(mode, el) {
+function setFaceMode(mode, el) {
   faceMode = mode;
-  el.closest('.radio-group').querySelectorAll('.radio-item').forEach(i=>i.classList.remove('on'));
+  document.querySelectorAll('#panel-face .radio-item').forEach(r => r.classList.remove('on'));
   el.classList.add('on');
-  document.getElementById('celebrity-input').style.display = mode==='celebrity'?'block':'none';
-  document.getElementById('concern-input').style.display = mode==='concern'?'block':'none';
+  document.getElementById('concern-input').style.display = mode === 'concern' ? 'block' : 'none';
+  document.getElementById('celebrity-input').style.display = mode === 'celebrity' ? 'block' : 'none';
 }
 
-function previewImage(input) {
+document.querySelectorAll('.radio-item input[type=radio]').forEach(inp => {
+  inp.addEventListener('change', function() {
+    this.closest('.radio-group').querySelectorAll('.radio-item').forEach(r => r.classList.remove('on'));
+    this.closest('.radio-item').classList.add('on');
+  });
+});
+
+function previewFaceImage(input) {
   const file = input.files[0];
   if (!file) return;
-  faceMediaType = file.type || 'image/jpeg';
+  faceType = file.type || 'image/jpeg';
   const reader = new FileReader();
   reader.onload = e => {
-    faceImageB64 = e.target.result.split(',')[1];
-    document.getElementById('upload-placeholder').innerHTML = 
-      `<img src="${e.target.result}" style="max-width:200px;max-height:200px;border-radius:8px">`;
+    faceB64 = e.target.result.split(',')[1];
+    document.getElementById('upload-placeholder').innerHTML =
+      '<img src="' + e.target.result + '">';
   };
   reader.readAsDataURL(file);
 }
 
-function copyText(text) {
-  navigator.clipboard.writeText(text);
+function copy(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    if (btn) { btn.textContent = '✓ 복사됨'; btn.classList.add('copied'); setTimeout(() => { btn.textContent = '복사'; btn.classList.remove('copied'); }, 2000); }
+  });
 }
 
-async function generateYoutube() {
-  const btn = document.getElementById('yt-btn');
-  const list = document.getElementById('yt-list');
-  btn.disabled = true; btn.textContent = '⏳ 생성 중...';
-
-  // 로딩 카드 맨 위에 추가
-  const loadingId = 'loading-' + Date.now();
-  const loadingCard = document.createElement('div');
-  loadingCard.id = loadingId;
-  loadingCard.className = 'loading';
-  loadingCard.style.cssText = 'border:1px solid #f3f4f6;border-radius:12px;padding:20px;margin-bottom:12px';
-  loadingCard.innerHTML = '<div class="spinner"></div>스크립트 생성 중... (30초~1분 소요)';
-  list.insertBefore(loadingCard, list.firstChild);
-  // 빈 상태 메시지 제거
-  list.querySelectorAll('.result-empty').forEach(e=>e.remove());
-
-  const category = document.getElementById('yt-category').value;
-  const type = document.querySelector('input[name="yt-type"]:checked').value;
-  const now = new Date().toLocaleTimeString('ko-KR', {hour:'2-digit',minute:'2-digit'});
-
-  try {
-    const r = await fetch('/api/content_ai/youtube', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({category, type})
-    });
-    const d = await r.json();
-    if (!d.success) throw new Error(d.error);
-    const data = d.data;
-    const uid = Date.now();
-
-    // 새 결과 카드 생성
-    const card = document.createElement('div');
-    card.style.cssText = 'border:1px solid #f3f4f6;border-radius:12px;padding:20px;margin-bottom:16px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.04)';
-    card.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
-        <div>
-          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
-            <span class="badge" style="font-size:12px">${category}</span>
-            <span class="badge" style="background:#f0f4ff;color:#4f46e5;font-size:12px">${type}</span>
-            ${data.angle ? `<span class="badge" style="background:#fff0f9;color:#c026d3;font-size:12px">📐 ${data.angle}</span>` : ''}
-            <span style="font-size:11px;color:#9ca3af">${now}</span>
-          </div>
-          <div class="keyword-badges">
-            ${(data.keywords||[]).map(k=>`<span class="badge">${k}</span>`).join('')}
-          </div>
-        </div>
-        <button onclick="this.closest('div[style]').remove();updateCardCount('yt')" style="font-size:13px;color:#9ca3af;border:none;background:none;cursor:pointer;flex-shrink:0">✕</button>
-      </div>
-
-      <div style="margin-bottom:14px;padding:12px;background:#fafafa;border-radius:8px">
-        <div style="font-size:11px;font-weight:700;color:#C9956C;margin-bottom:8px;letter-spacing:.05em">제목 추천</div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <div>
-            <span style="font-size:10px;background:#e8f0fe;color:#4f8ef7;padding:2px 6px;border-radius:4px;margin-right:6px">SEO</span>
-            <span style="font-size:13px;font-weight:600;color:#1A1A1A">${data.titles?.seo||''}</span>
-            <span id="title-seo-'+(uid)+'" style="font-size:13px;font-weight:600;color:#1A1A1A">${data.titles?.seo||''}</span>
-            <button class="copy-btn" style="margin-left:8px;padding:2px 8px;font-size:10px" onclick="copyText(document.getElementById('title-seo-'+uid).textContent)">복사</button>
-          <div>
-            <span style="font-size:10px;background:#fff0e8;color:#f7934f;padding:2px 6px;border-radius:4px;margin-right:6px">궁금증</span>
-            <span style="font-size:12px;color:#374151">${data.titles?.curiosity||''}</span>
-          </div>
-          <div>
-            <span style="font-size:10px;background:#e8faf3;color:#4fd19e;padding:2px 6px;border-radius:4px;margin-right:6px">공감</span>
-            <span style="font-size:12px;color:#374151">${data.titles?.empathy||''}</span>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-bottom:14px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <div style="font-size:11px;font-weight:700;color:#C9956C;letter-spacing:.05em">롱폼 대본</div>
-          <button class="copy-btn" onclick="copyText(document.getElementById('lf-${uid}').innerText)">전체 복사</button>
-        </div>
-        <div id="lf-${uid}" style="background:#f9fafb;border-radius:8px;padding:14px;font-size:13px;line-height:2;white-space:pre-wrap;max-height:300px;overflow-y:auto;color:#1A1A1A">${(data.longform||'').replace(/\\n/g,'\\n')}</div>
-      </div>
-
-      <div style="margin-bottom:14px">
-        <div style="font-size:11px;font-weight:700;color:#C9956C;margin-bottom:8px;letter-spacing:.05em">숏폼 ${(data.shortforms||[]).length}개 추출</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          ${(data.shortforms||[]).map((s,i)=>`
-            <div style="background:#f9fafb;border-radius:8px;padding:12px">
-              <div style="font-size:11px;font-weight:700;color:#C9956C;margin-bottom:4px">숏폼 ${i+1}</div>
-              ${s.hook ? `<div style="font-size:12px;font-weight:600;color:#1A1A1A;margin-bottom:6px">${s.hook}</div>` : ''}
-              <div id="sf-${uid}-${i}" style="font-size:12px;line-height:1.9;color:#374151;white-space:pre-wrap">${(s.script||s||'').split('/').join('\n/ ')}</div>
-              <button class="copy-btn" style="margin-top:8px;font-size:10px" onclick="copyText(document.getElementById('sf-${uid}-${i}').innerText)">복사</button>
-            </div>`).join('')}
-        </div>
-      </div>
-
-      <div style="margin-bottom:14px">
-        <div style="font-size:11px;font-weight:700;color:#C9956C;margin-bottom:6px;letter-spacing:.05em">해시태그</div>
-        <div class="hashtags">
-          ${(data.hashtags||[]).map(h=>`<span class="htag" style="font-size:11px" onclick="copyText('${h}')">${h}</span>`).join('')}
-        </div>
-      </div>
-
-      ${(data.multilang && (data.multilang.en || data.multilang.zh || data.multilang.ja)) ? `
-      <div style="margin-bottom:14px">
-        <div style="font-size:11px;font-weight:700;color:#C9956C;margin-bottom:10px;letter-spacing:.05em">🌐 다국어 버전</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-
-          ${data.multilang.en ? `
-          <div style="background:#f0f4ff;border-radius:8px;padding:12px">
-            <div style="font-size:11px;font-weight:700;color:#4f46e5;margin-bottom:6px">🇺🇸 English</div>
-            <div style="font-size:13px;font-weight:600;color:#1A1A1A;margin-bottom:4px">${data.multilang.en.title||''}</div>
-            <div style="font-size:12px;color:#6b7280;margin-bottom:6px">${data.multilang.en.thumbnail||''}</div>
-            <div style="display:flex;flex-wrap:wrap;gap:4px">
-              ${(data.multilang.en.hashtags||'').split(' ').filter(h=>h).map(h=>`<span class="htag" style="font-size:10px;background:#e0e7ff;color:#4f46e5" onclick="copyText('${h}')">${h}</span>`).join('')}
-            </div>
-          </div>` : ''}
-
-          ${data.multilang.zh ? `
-          <div style="background:#fff7f0;border-radius:8px;padding:12px">
-            <div style="font-size:11px;font-weight:700;color:#ea580c;margin-bottom:6px">🇨🇳 中文</div>
-            <div style="font-size:13px;font-weight:600;color:#1A1A1A;margin-bottom:4px">${data.multilang.zh.title||''}</div>
-            <div style="font-size:12px;color:#6b7280;margin-bottom:6px">${data.multilang.zh.thumbnail||''}</div>
-            <div style="display:flex;flex-wrap:wrap;gap:4px">
-              ${(data.multilang.zh.hashtags||'').split(' ').filter(h=>h).map(h=>`<span class="htag" style="font-size:10px;background:#ffedd5;color:#ea580c" onclick="copyText('${h}')">${h}</span>`).join('')}
-            </div>
-          </div>` : ''}
-
-          ${data.multilang.ja ? `
-          <div style="background:#f0fdf4;border-radius:8px;padding:12px">
-            <div style="font-size:11px;font-weight:700;color:#16a34a;margin-bottom:6px">🇯🇵 日本語</div>
-            <div style="font-size:13px;font-weight:600;color:#1A1A1A;margin-bottom:4px">${data.multilang.ja.title||''}</div>
-            <div style="font-size:12px;color:#6b7280;margin-bottom:6px">${data.multilang.ja.thumbnail||''}</div>
-            <div style="display:flex;flex-wrap:wrap;gap:4px">
-              ${(data.multilang.ja.hashtags||'').split(' ').filter(h=>h).map(h=>`<span class="htag" style="font-size:10px;background:#dcfce7;color:#16a34a" onclick="copyText('${h}')">${h}</span>`).join('')}
-            </div>
-          </div>` : ''}
-
-        </div>
-      </div>` : ''}
-
-      ${makeStageBar(uid)}
-    `;
-
-    // 로딩 카드 교체
-    list.replaceChild(card, document.getElementById(loadingId));
-    updateCardCount('yt');
-
-  } catch(e) {
-    const errCard = document.createElement('div');
-    errCard.style.cssText = 'border:1px solid #fee2e2;border-radius:12px;padding:16px;margin-bottom:12px;color:#ef4444;font-size:13px';
-    errCard.innerHTML = `오류: ${e.message} <button onclick="this.parentElement.remove()" style="margin-left:8px;border:none;background:none;cursor:pointer;color:#9ca3af">✕</button>`;
-    list.replaceChild(errCard, document.getElementById(loadingId));
-  } finally {
-    btn.disabled=false; btn.textContent='🎬 스크립트 생성';
-  }
+function makeStageBar(uid) {
+  const saved = JSON.parse(localStorage.getItem('stage_' + uid) || '{"idx":0}');
+  const idx = saved.idx || 0;
+  return '<div class="stage-bar" id="sb-' + uid + '">' +
+    STAGES.map((s, i) => '<button class="stage-btn' + (i < idx ? ' done' : i === idx ? ' current' : '') + '" onclick="setStage(\'' + uid + '\',' + i + ')">' + (i < idx ? '✓ ' : '') + s + '</button>').join('') +
+    '</div>';
 }
 
-// 단계 목록
-const STAGES = ['생성완료', '촬영완료', '편집완료', '업로드예정', '업로드완료'];
-
-function makeStageBar(id) {
-  const saved = JSON.parse(localStorage.getItem('stage_'+id) || '{}');
-  const currentIdx = saved.stage !== undefined ? saved.stage : 0;
-  return `<div class="stage-bar" id="stagebar-${id}">
-    ${STAGES.map((s,i) => `<button
-      class="stage-btn ${i < currentIdx ? 'done' : i === currentIdx ? 'current' : ''}"
-      onclick="setStage('${id}', ${i})"
-    >${i < currentIdx ? '✓ ' : ''}${s}</button>`).join('')}
-  </div>`;
-}
-
-function setStage(id, idx) {
-  localStorage.setItem('stage_'+id, JSON.stringify({stage: idx, updated: new Date().toISOString()}));
-  const bar = document.getElementById('stagebar-'+id);
+function setStage(uid, idx) {
+  localStorage.setItem('stage_' + uid, JSON.stringify({idx}));
+  const bar = document.getElementById('sb-' + uid);
   if (!bar) return;
   bar.querySelectorAll('.stage-btn').forEach((btn, i) => {
-    btn.className = 'stage-btn ' + (i < idx ? 'done' : i === idx ? 'current' : '');
+    btn.className = 'stage-btn' + (i < idx ? ' done' : i === idx ? ' current' : '');
     btn.textContent = (i < idx ? '✓ ' : '') + STAGES[i];
   });
 }
 
-function updateCardCount(type) {
-  const map = {yt:'yt-list', face:'face-list', kw:'kw-list', shorts:'shorts-list'};
-  const countMap = {yt:'yt-count', face:'face-count', kw:'kw-count', shorts:'shorts-count'};
-  const list = document.getElementById(map[type]);
-  const countEl = document.getElementById(countMap[type]);
-  if (!list || !countEl) return;
-  const cnt = list.querySelectorAll('div[style*="border"]').length;
-  countEl.textContent = cnt > 0 ? `(${cnt}개)` : '';
+function updateCounter(listId, counterId) {
+  const list = document.getElementById(listId);
+  const counter = document.getElementById(counterId);
+  if (!list || !counter) return;
+  const cnt = list.querySelectorAll('.card,.err-card').length;
+  if (cnt > 0) {
+    counter.style.display = 'block';
+    counter.innerHTML = '총 ' + cnt + '개 생성 <button class="clear-btn" onclick="clearList(\'' + listId + '\',\'' + counterId + '\')">전체 삭제</button>';
+  } else {
+    counter.style.display = 'none';
+  }
 }
 
-function showTitle(type, btn) {
-  document.querySelectorAll('.ttab').forEach(t=>t.classList.remove('on'));
-  btn.classList.add('on');
-  ['seo','curiosity','empathy'].forEach(t=>{
-    document.getElementById('title-'+t).style.display = t===type?'block':'none';
-  });
+function clearList(listId, counterId) {
+  const list = document.getElementById(listId);
+  list.innerHTML = '<div class="empty"><div class="empty-icon">🗑</div><div>삭제되었어요</div></div>';
+  document.getElementById(counterId).style.display = 'none';
 }
 
+function addLoadingCard(listId) {
+  const list = document.getElementById(listId);
+  list.querySelectorAll('.empty').forEach(e => e.remove());
+  const id = 'loading-' + Date.now();
+  const div = document.createElement('div');
+  div.id = id;
+  div.className = 'loading-card';
+  div.innerHTML = '<div class="spinner"></div><span>생성 중... (30초~1분 소요)</span>';
+  list.insertBefore(div, list.firstChild);
+  return id;
+}
+
+// ── 유튜브 스크립트 ──
+async function generateYoutube() {
+  const btn = document.getElementById('yt-btn');
+  btn.disabled = true; btn.textContent = '⏳ 생성 중...';
+  const loadId = addLoadingCard('yt-list');
+  const cat = document.getElementById('yt-cat').value;
+  const type = document.querySelector('input[name="yt-type"]:checked').value;
+  const now = new Date().toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'});
+  const uid = Date.now().toString();
+  try {
+    const r = await fetch('/api/content_ai/youtube', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({category: cat, type: type})
+    });
+    const d = await r.json();
+    if (!d.success) throw new Error(d.error);
+    const data = d.data;
+    const card = document.createElement('div');
+    card.className = 'card';
+    const sfs = (data.shortforms || []).map((s, i) =>
+      '<div class="sf-card">' +
+        '<div class="sf-num">숏폼 ' + (i+1) + '</div>' +
+        (s.hook ? '<div class="sf-hook">' + esc(s.hook) + '</div>' : '') +
+        '<div id="sf-' + uid + '-' + i + '" class="sf-script">' + esc(s.script || '') + '</div>' +
+        '<button class="copy-btn" style="margin-top:6px" onclick="copy(document.getElementById(\'sf-' + uid + '-' + i + '\').textContent,this)">복사</button>' +
+      '</div>'
+    ).join('');
+
+    const ml = data.multilang || {};
+    const langs = [
+      ml.en ? {flag:'🇺🇸',lang:'English',key:'en',color:'#3b82f6'} : null,
+      ml.zh ? {flag:'🇨🇳',lang:'中文',key:'zh',color:'#ef4444'} : null,
+      ml.ja ? {flag:'🇯🇵',lang:'日本語',key:'ja',color:'#ef4444'} : null
+    ].filter(Boolean);
+
+    const mlHtml = langs.length ? '<div class="section"><div class="section-title">🌐 다국어</div>' +
+      langs.map(l => {
+        const ldata = ml[l.key] || {};
+        return '<div class="lang-block">' +
+          '<div class="lang-title">' + l.flag + ' ' + l.lang + '</div>' +
+          '<div class="lang-label" id="lt-' + uid + '-' + l.key + '">' + esc(ldata.title || '') + '</div>' +
+          '<div class="lang-sub">' + esc(ldata.thumbnail || '') + '</div>' +
+          '<div class="hashtags">' + (ldata.hashtags || '').split(' ').filter(h=>h).map(h =>
+            '<span class="htag" onclick="copy(\'' + h + '\',null)">' + esc(h) + '</span>'
+          ).join('') + '</div>' +
+          '<button class="copy-btn" style="margin-top:6px" onclick="copy(document.getElementById(\'lt-' + uid + '-' + l.key + '\').textContent,this)">제목 복사</button>' +
+        '</div>';
+      }).join('') + '</div>' : '';
+
+    card.innerHTML =
+      '<div class="card-header">' +
+        '<div class="badges">' +
+          '<span class="badge badge-cat">' + esc(cat) + '</span>' +
+          '<span class="badge badge-type">' + esc(type) + '</span>' +
+          (data.angle ? '<span class="badge badge-angle">📐 ' + esc(data.angle) + '</span>' : '') +
+          '<span class="badge-time">' + now + '</span>' +
+        '</div>' +
+        '<button class="close-btn" onclick="this.closest(\'.card\').remove();updateCounter(\'yt-list\',\'yt-counter\')">✕</button>' +
+      '</div>' +
+      '<div class="section">' +
+        '<div class="section-title">제목</div>' +
+        '<div class="title-row"><span class="title-label label-seo">SEO</span><span class="title-text" id="tit-seo-' + uid + '">' + esc(data.titles?.seo || '') + '</span><button class="copy-btn" onclick="copy(document.getElementById(\'tit-seo-' + uid + '\').textContent,this)">복사</button></div>' +
+        '<div class="title-row"><span class="title-label label-cur">궁금증</span><span class="title-text">' + esc(data.titles?.curiosity || '') + '</span></div>' +
+        '<div class="title-row"><span class="title-label label-emp">공감</span><span class="title-text">' + esc(data.titles?.empathy || '') + '</span></div>' +
+      '</div>' +
+      '<div class="section">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+          '<div class="section-title" style="margin-bottom:0">대본</div>' +
+          '<button class="copy-btn" onclick="copy(document.getElementById(\'lf-' + uid + '\').textContent,this)">전체 복사</button>' +
+        '</div>' +
+        '<div class="script-box" id="lf-' + uid + '">' + esc(data.longform || '') + '</div>' +
+      '</div>' +
+      (sfs ? '<div class="section"><div class="section-title">숏폼 ' + (data.shortforms||[]).length + '개</div><div class="sf-grid">' + sfs + '</div></div>' : '') +
+      '<div class="section">' +
+        '<div class="section-title">해시태그</div>' +
+        '<div class="hashtags">' + (data.hashtags||[]).map(h => '<span class="htag" onclick="copy(\'' + h + '\',null)">' + esc(h) + '</span>').join('') + '</div>' +
+      '</div>' +
+      mlHtml +
+      makeStageBar(uid);
+
+    document.getElementById('loading-' + loadId.replace('loading-','')).replaceWith
+    document.getElementById(loadId).replaceWith(card);
+    updateCounter('yt-list', 'yt-counter');
+  } catch(e) {
+    const err = document.createElement('div');
+    err.className = 'err-card';
+    err.innerHTML = '오류: ' + e.message + '<button class="copy-btn" onclick="this.closest(\'.err-card\').remove()">닫기</button>';
+    document.getElementById(loadId).replaceWith(err);
+  } finally {
+    btn.disabled = false; btn.textContent = '🎬 스크립트 생성';
+  }
+}
+
+// ── 숏츠 10개 ──
+async function generateShorts() {
+  const btn = document.getElementById('shorts-btn');
+  btn.disabled = true; btn.textContent = '⏳ 생성 중...';
+  const count = document.getElementById('shorts-num').value;
+  const loadId = addLoadingCard('shorts-list');
+  const now = new Date().toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'});
+  const uid = Date.now().toString();
+  try {
+    const r = await fetch('/api/content_ai/shorts_batch', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({count: parseInt(count)})
+    });
+    const d = await r.json();
+    if (!d.success) throw new Error(d.error);
+    const shorts = d.data.shorts || [];
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML =
+      '<div class="card-header">' +
+        '<div class="badges"><span class="badge badge-cat">숏츠 ' + shorts.length + '개</span><span class="badge-time">' + now + '</span></div>' +
+        '<button class="close-btn" onclick="this.closest(\'.card\').remove();updateCounter(\'shorts-list\',\'shorts-counter\')">✕</button>' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:10px">' +
+        shorts.map((s, i) => {
+          const sid = uid + '-' + i;
+          return '<div style="background:#0f0f1a;border:1px solid #2a2a3e;border-radius:8px;padding:14px">' +
+            '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
+              '<span style="background:#C9956C;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">' + (s.id||i+1) + '</span>' +
+              '<span class="badge badge-cat" style="font-size:10px">' + esc(s.category||'') + '</span>' +
+              '<span style="font-size:13px;font-weight:600;color:#f3f4f6">' + esc(s.title||'') + '</span>' +
+            '</div>' +
+            (s.hook ? '<div class="sf-hook" style="margin-bottom:8px">' + esc(s.hook) + '</div>' : '') +
+            '<div class="expand-btn" onclick="const sc=this.nextElementSibling;sc.style.display=sc.style.display===\'none\'?\'block\':\'none\';this.textContent=sc.style.display===\'none\'?\'▶ 대본 보기\':\'▼ 접기\'">▶ 대본 보기</div>' +
+            '<div id="ss-' + sid + '" class="expandable script-box">' + esc(s.script_30sec||'') + '</div>' +
+            '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">' + (s.hashtags||[]).map(h => '<span class="htag" onclick="copy(\'' + esc(h) + '\',null)" style="font-size:10px">' + esc(h) + '</span>').join('') + '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+      makeStageBar(uid);
+    document.getElementById(loadId).replaceWith(card);
+    updateCounter('shorts-list', 'shorts-counter');
+    btn.textContent = '✅ 완료! 다시 생성';
+    setTimeout(() => { btn.textContent = '⚡ 숏츠 생성'; }, 3000);
+  } catch(e) {
+    const err = document.createElement('div');
+    err.className = 'err-card';
+    err.innerHTML = '오류: ' + e.message + '<button class="copy-btn" onclick="this.closest(\'.err-card\').remove()">닫기</button>';
+    document.getElementById(loadId).replaceWith(err);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ── 얼굴형 분석 ──
 async function generateFace() {
-  if (!faceImageB64) { alert('이미지를 먼저 업로드해주세요!'); return; }
+  if (!faceB64) { alert('이미지를 먼저 업로드해주세요!'); return; }
   const btn = document.getElementById('face-btn');
-  const list = document.getElementById('face-list');
-  btn.disabled=true; btn.textContent='⏳ 분석 중...';
-
-  const loadingId = 'loading-' + Date.now();
-  const loadingCard = document.createElement('div');
-  loadingCard.id = loadingId;
-  loadingCard.className = 'loading';
-  loadingCard.style.cssText = 'border:1px solid #f3f4f6;border-radius:12px;padding:20px;margin-bottom:12px';
-  loadingCard.innerHTML = '<div class="spinner"></div>얼굴 분석 중... (30초~1분 소요)';
-  list.insertBefore(loadingCard, list.firstChild);
-  list.querySelectorAll('.result-empty').forEach(e=>e.remove());
-
-  const now = new Date().toLocaleTimeString('ko-KR', {hour:'2-digit',minute:'2-digit'});
-  const uid = Date.now();
-
+  btn.disabled = true; btn.textContent = '⏳ 분석 중...';
+  const loadId = addLoadingCard('face-list');
+  const now = new Date().toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'});
+  const uid = Date.now().toString();
   try {
     const r = await fetch('/api/content_ai/face', {
-      method:'POST', headers:{'Content-Type':'application/json'},
+      method: 'POST', headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        image_base64: faceImageB64,
-        media_type: faceMediaType,
-        mode: faceMode,
+        image_base64: faceB64, media_type: faceType, mode: faceMode,
         person_name: document.getElementById('person-name').value,
         concern_area: document.getElementById('concern-area').value
       })
@@ -4365,260 +4334,115 @@ async function generateFace() {
     if (!d.success) throw new Error(d.error);
     const data = d.data;
     const rs = data.reels_script || {};
-
     const card = document.createElement('div');
-    card.style.cssText = 'border:1px solid #f3f4f6;border-radius:12px;padding:20px;margin-bottom:16px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.04)';
-    card.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-          <span class="badge" style="font-size:12px">${data.face_type||'분석완료'}</span>
-          <span style="font-size:11px;color:#9ca3af">${faceMode==='celebrity'?'연예인':'고민형'} · ${now}</span>
-        </div>
-        <button onclick="this.closest('div[style]').remove();updateCardCount('face')" style="font-size:13px;color:#9ca3af;border:none;background:none;cursor:pointer">✕</button>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-        <div style="background:#fafafa;border-radius:8px;padding:12px">
-          <div style="font-size:11px;font-weight:700;color:#C9956C;margin-bottom:6px">얼굴형 분석</div>
-          <div style="font-size:14px;font-weight:700;color:#1A1A1A;margin-bottom:4px">${data.face_type||''}</div>
-          <div style="font-size:12px;color:#6b7280;line-height:1.6">${data.face_features||''}</div>
-        </div>
-        <div style="background:#fafafa;border-radius:8px;padding:12px">
-          <div style="font-size:11px;font-weight:700;color:#C9956C;margin-bottom:6px">장점</div>
-          <div style="font-size:12px;color:#374151;line-height:1.6">${data.strength||''}</div>
-        </div>
-      </div>
-
-      <div style="margin-bottom:14px;background:#fafafa;border-radius:8px;padding:14px">
-        <div style="font-size:11px;font-weight:700;color:#C9956C;margin-bottom:10px;letter-spacing:.05em">30초 릴스 대본</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          ${Object.entries(rs).map(([t,c])=>`
-            <div style="display:flex;gap:12px;align-items:flex-start">
-              <div style="color:#C9956C;font-weight:700;font-size:12px;min-width:55px;padding-top:2px">${t}</div>
-              <div style="font-size:13px;color:#374151;line-height:1.8;flex:1">${c}</div>
-            </div>`).join('')}
-        </div>
-      </div>
-
-      <div style="margin-bottom:14px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <div style="font-size:11px;font-weight:700;color:#C9956C;letter-spacing:.05em">인스타 캡션</div>
-          <button class="copy-btn" onclick="copyText(document.getElementById('cap-${uid}').innerText)">복사</button>
-        </div>
-        <div id="cap-${uid}" style="background:#f9fafb;border-radius:8px;padding:12px;font-size:12px;line-height:1.9;white-space:pre-wrap;color:#374151">${data.caption||''}</div>
-      </div>
-
-      <div style="margin-bottom:12px">
-        <div class="hashtags">
-          ${(data.hashtags||[]).map(h=>`<span class="htag" style="font-size:11px" onclick="copyText('${h}')">${h}</span>`).join('')}
-        </div>
-      </div>
-
-      ${makeStageBar(uid)}
-    `;
-
-    list.replaceChild(card, document.getElementById(loadingId));
-    updateCardCount('face');
-
+    card.className = 'card';
+    card.innerHTML =
+      '<div class="card-header">' +
+        '<div class="badges"><span class="badge badge-cat">' + esc(data.face_type||'분석완료') + '</span><span class="badge badge-type">' + (faceMode==='celebrity'?'연예인':'고민형') + '</span><span class="badge-time">' + now + '</span></div>' +
+        '<button class="close-btn" onclick="this.closest(\'.card\').remove();updateCounter(\'face-list\',\'face-counter\')">✕</button>' +
+      '</div>' +
+      '<div class="face-grid">' +
+        '<div class="face-box"><div class="face-box-title">얼굴형</div><div class="face-box-val">' + esc(data.face_type||'') + '</div><div class="face-box-sub">' + esc(data.face_features||'') + '</div></div>' +
+        '<div class="face-box"><div class="face-box-title">장점</div><div class="face-box-sub">' + esc(data.strength||'') + '</div></div>' +
+      '</div>' +
+      '<div class="section"><div class="section-title">30초 릴스 대본</div>' +
+        '<div class="timeline">' + Object.entries(rs).map(([t,c]) => '<div class="tl-row"><div class="tl-time">' + esc(t) + '</div><div class="tl-text">' + esc(c) + '</div></div>').join('') + '</div>' +
+      '</div>' +
+      '<div class="section" style="display:flex;justify-content:space-between;align-items:center">' +
+        '<div class="section-title" style="margin-bottom:0">인스타 캡션</div>' +
+        '<button class="copy-btn" onclick="copy(document.getElementById(\'cap-' + uid + '\').textContent,this)">복사</button>' +
+      '</div>' +
+      '<div id="cap-' + uid + '" class="script-box" style="margin-bottom:14px">' + esc(data.caption||'') + '</div>' +
+      '<div class="hashtags">' + (data.hashtags||[]).map(h => '<span class="htag" onclick="copy(\'' + esc(h) + '\',null)">' + esc(h) + '</span>').join('') + '</div>' +
+      makeStageBar(uid);
+    document.getElementById(loadId).replaceWith(card);
+    updateCounter('face-list', 'face-counter');
   } catch(e) {
-    const errCard = document.createElement('div');
-    errCard.style.cssText = 'border:1px solid #fee2e2;border-radius:12px;padding:16px;margin-bottom:12px;color:#ef4444;font-size:13px';
-    errCard.innerHTML = `오류: ${e.message} <button onclick="this.parentElement.remove()" style="margin-left:8px;border:none;background:none;cursor:pointer;color:#9ca3af">✕</button>`;
-    list.replaceChild(errCard, document.getElementById(loadingId));
+    const err = document.createElement('div');
+    err.className = 'err-card';
+    err.innerHTML = '오류: ' + e.message + '<button class="copy-btn" onclick="this.closest(\'.err-card\').remove()">닫기</button>';
+    document.getElementById(loadId).replaceWith(err);
   } finally {
-    btn.disabled=false; btn.textContent='👤 분석 시작';
+    btn.disabled = false; btn.textContent = '👤 분석 시작';
   }
 }
 
+// ── 키워드 릴스 ──
 async function generateKeyword() {
   const kw = document.getElementById('kw-input').value.trim();
   if (!kw) { alert('키워드를 입력해주세요!'); return; }
   const btn = document.getElementById('kw-btn');
-  const list = document.getElementById('kw-list');
-  btn.disabled=true; btn.textContent='⏳ 추천 중...';
-
-  const loadingId = 'loading-' + Date.now();
-  const loadingCard = document.createElement('div');
-  loadingCard.id = loadingId;
-  loadingCard.className = 'loading';
-  loadingCard.style.cssText = 'border:1px solid #f3f4f6;border-radius:12px;padding:20px;margin-bottom:12px';
-  loadingCard.innerHTML = '<div class="spinner"></div>릴스 주제 추천 중... (30초~1분 소요)';
-  list.insertBefore(loadingCard, list.firstChild);
-  list.querySelectorAll('.result-empty').forEach(e=>e.remove());
-
-  const now = new Date().toLocaleTimeString('ko-KR', {hour:'2-digit',minute:'2-digit'});
-
+  btn.disabled = true; btn.textContent = '⏳ 추천 중...';
+  const loadId = addLoadingCard('kw-list');
+  const now = new Date().toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'});
+  const uid = Date.now().toString();
   try {
     const r = await fetch('/api/content_ai/keyword_reels', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({keyword:kw, category:document.getElementById('kw-category').value})
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({keyword: kw, category: document.getElementById('kw-cat').value})
     });
     const d = await r.json();
     if (!d.success) throw new Error(d.error);
     const recs = d.data.recommendations || [];
-
     const card = document.createElement('div');
-    card.style.cssText = 'border:1px solid #f3f4f6;border-radius:12px;padding:20px;margin-bottom:16px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.04)';
-    const kwUid = Date.now();
-    card.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
-        <div>
-          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:4px">
-            <span class="badge" style="font-size:12px">${kw}</span>
-            <span style="font-size:11px;color:#9ca3af">${recs.length}개 추천 · ${now}</span>
-          </div>
-        </div>
-        <button onclick="this.closest('div[style]').remove();updateCardCount('kw')" style="font-size:13px;color:#9ca3af;border:none;background:none;cursor:pointer">✕</button>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:12px">
-        ${recs.map((r,i)=>`
-          <div style="background:#fafafa;border-radius:8px;padding:14px">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-              <span style="background:#C9956C;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${i+1}</span>
-              <span style="font-size:14px;font-weight:700;color:#1A1A1A">${r.title||''}</span>
-            </div>
-            <div style="font-size:13px;color:#C9956C;font-weight:600;margin-bottom:8px;padding:6px 10px;background:#fff8f5;border-radius:6px">${r.hook||''}</div>
-            <div style="font-size:12px;color:#374151;margin-bottom:8px;line-height:1.8">${(r.points||[]).map(p=>`• ${p}`).join('<br>')}</div>
-            <div style="font-size:12px;cursor:pointer;color:#9ca3af;margin-bottom:6px" onclick="const sc=this.nextElementSibling;sc.style.display=sc.style.display==='none'?'block':'none';this.textContent=sc.style.display==='none'?'▶ 30초 대본 보기':'▼ 대본 접기'">▶ 30초 대본 보기</div>
-            <div style="display:none;font-size:12px;background:#fff;border-radius:6px;padding:12px;line-height:2;white-space:pre-wrap;color:#1A1A1A">${r.script_30sec||''}</div>
-            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">
-              ${(r.hashtags||[]).map(h=>`<span class="htag" style="font-size:11px" onclick="copyText('${h}')">${h}</span>`).join('')}
-            </div>
-          </div>`).join('')}
-      </div>
-      ${makeStageBar(kwUid)}
-    `;
-
-    list.replaceChild(card, document.getElementById(loadingId));
-    updateCardCount('kw');
-
+    card.className = 'card';
+    card.innerHTML =
+      '<div class="card-header">' +
+        '<div class="badges"><span class="badge badge-cat">' + esc(kw) + '</span><span class="badge-time">' + recs.length + '개 추천 · ' + now + '</span></div>' +
+        '<button class="close-btn" onclick="this.closest(\'.card\').remove();updateCounter(\'kw-list\',\'kw-counter\')">✕</button>' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:10px">' +
+        recs.map((rec, i) => {
+          const rid = uid + '-' + i;
+          return '<div style="background:#0f0f1a;border:1px solid #2a2a3e;border-radius:8px;padding:14px">' +
+            '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
+              '<span style="background:#C9956C;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">' + (i+1) + '</span>' +
+              '<span style="font-size:13px;font-weight:700;color:#f3f4f6">' + esc(rec.title||'') + '</span>' +
+            '</div>' +
+            '<div class="sf-hook" style="margin-bottom:8px">' + esc(rec.hook||'') + '</div>' +
+            '<div style="font-size:12px;color:#9ca3af;margin-bottom:8px;line-height:1.7">' + (rec.points||[]).map(p => '• ' + esc(p)).join('<br>') + '</div>' +
+            '<div class="expand-btn" onclick="const sc=this.nextElementSibling;sc.style.display=sc.style.display===\'none\'?\'block\':\'none\';this.textContent=sc.style.display===\'none\'?\'▶ 30초 대본 보기\':\'▼ 접기\'">▶ 30초 대본 보기</div>' +
+            '<div id="kr-' + rid + '" class="expandable script-box">' + esc(rec.script_30sec||'') + '</div>' +
+            '<div style="display:flex;gap:4px;margin-top:8px;flex-wrap:wrap">' + (rec.hashtags||[]).map(h => '<span class="htag" onclick="copy(\'' + esc(h) + '\',null)" style="font-size:10px">' + esc(h) + '</span>').join('') + '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+      makeStageBar(uid);
+    document.getElementById(loadId).replaceWith(card);
+    updateCounter('kw-list', 'kw-counter');
   } catch(e) {
-    const errCard = document.createElement('div');
-    errCard.style.cssText = 'border:1px solid #fee2e2;border-radius:12px;padding:16px;margin-bottom:12px;color:#ef4444;font-size:13px';
-    errCard.innerHTML = `오류: ${e.message} <button onclick="this.parentElement.remove()" style="margin-left:8px;border:none;background:none;cursor:pointer;color:#9ca3af">✕</button>`;
-    list.replaceChild(errCard, document.getElementById(loadingId));
+    const err = document.createElement('div');
+    err.className = 'err-card';
+    err.innerHTML = '오류: ' + e.message + '<button class="copy-btn" onclick="this.closest(\'.err-card\').remove()">닫기</button>';
+    document.getElementById(loadId).replaceWith(err);
   } finally {
-    btn.disabled=false; btn.textContent='🔑 주제 추천받기';
+    btn.disabled = false; btn.textContent = '🔑 주제 추천';
   }
 }
 
-async function generateShorts() {
-  const btn = document.getElementById('shorts-btn');
-  const list = document.getElementById('shorts-list');
-  const count = document.getElementById('shorts-count-select').value;
-  btn.disabled=true; btn.textContent='⏳ 생성 중... (1-2분 소요)';
-  btn.style.background='#6b7280';
-
-  const loadingId = 'loading-' + Date.now();
-  const loadingCard = document.createElement('div');
-  loadingCard.id = loadingId;
-  loadingCard.className = 'loading';
-  loadingCard.style.cssText = 'border:1px solid #f3f4f6;border-radius:12px;padding:20px;margin-bottom:12px';
-  loadingCard.innerHTML = `<div class="spinner"></div>숏츠 ${count}개 생성 중...`;
-  list.insertBefore(loadingCard, list.firstChild);
-  list.querySelectorAll('.result-empty').forEach(e=>e.remove());
-
-  const now = new Date().toLocaleTimeString('ko-KR', {hour:'2-digit',minute:'2-digit'});
-
-  try {
-    const r = await fetch('/api/content_ai/shorts_batch',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({count:parseInt(count)})
-    });
-    const d = await r.json();
-    if (!d.success) throw new Error(d.error);
-    const shorts = d.data.shorts || [];
-
-    const card = document.createElement('div');
-    card.style.cssText = 'border:1px solid #f3f4f6;border-radius:12px;padding:20px;margin-bottom:16px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.04)';
-    const sUid = Date.now();
-    card.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-          <span class="badge" style="font-size:12px">숏츠 ${shorts.length}개</span>
-          <span style="font-size:11px;color:#9ca3af">${now}</span>
-        </div>
-        <button onclick="this.closest('div[style]').remove();updateCardCount('shorts')" style="font-size:13px;color:#9ca3af;border:none;background:none;cursor:pointer">✕</button>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        ${shorts.map((s,i)=>`
-          <div style="background:#fafafa;border-radius:8px;padding:14px">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-              <span style="background:#C9956C;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${s.id||i+1}</span>
-              <span class="pcat ${(s.category||'').includes('눈')?'eye':(s.category||'').includes('코')?'nose':'lifting'}" style="font-size:11px">${s.category||''}</span>
-              <span style="font-size:13px;font-weight:700;color:#1A1A1A">${s.title||''}</span>
-            </div>
-            <div style="font-size:13px;color:#C9956C;font-weight:600;margin-bottom:8px;padding:6px 10px;background:#fff8f5;border-radius:6px">${s.hook||''}</div>
-            <div style="font-size:12px;cursor:pointer;color:#9ca3af;margin-bottom:6px" onclick="const sc=this.nextElementSibling;sc.style.display=sc.style.display==='none'?'block':'none';this.textContent=sc.style.display==='none'?'▶ 대본 보기':'▼ 대본 접기'">▶ 대본 보기</div>
-            <div style="display:none;font-size:12px;background:#fff;border-radius:6px;padding:12px;line-height:2;white-space:pre-wrap;color:#1A1A1A">${(s.script_30sec||'')}</div>
-            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">
-              ${(s.hashtags||[]).map(h=>`<span class="htag" style="font-size:11px" onclick="copyText('${h}')">${h}</span>`).join('')}
-            </div>
-          </div>`).join('')}
-      </div>
-      ${makeStageBar(sUid)}
-    `;
-
-    list.replaceChild(card, document.getElementById(loadingId));
-    updateCardCount('shorts');
-
-    btn.style.background='#16a34a';
-    btn.textContent='✅ 생성 완료!';
-    setTimeout(()=>{btn.style.background='linear-gradient(135deg,#C9956C,#E8927C)';btn.textContent='⚡ 숏츠 생성';},3000);
-  } catch(e) {
-    const errCard = document.createElement('div');
-    errCard.style.cssText = 'border:1px solid #fee2e2;border-radius:12px;padding:16px;margin-bottom:12px;color:#ef4444;font-size:13px';
-    errCard.innerHTML = `오류: ${e.message} <button onclick="this.parentElement.remove()" style="margin-left:8px;border:none;background:none;cursor:pointer;color:#9ca3af">✕</button>`;
-    list.replaceChild(errCard, document.getElementById(loadingId));
-    btn.style.background='linear-gradient(135deg,#C9956C,#E8927C)';
-    btn.textContent='⚡ 숏츠 생성';
-  } finally {
-    btn.disabled=false;
-  }
-}
-
+// ── 히스토리 ──
 async function loadHistory() {
-  const el = document.getElementById('history-list');
+  const el = document.getElementById('history-content');
+  el.innerHTML = '<div class="loading-card"><div class="spinner"></div>히스토리 로딩 중...</div>';
   try {
     const r = await fetch('/api/content_ai/history');
     const items = await r.json();
-    if (!items.length) {
-      el.innerHTML='<div class="result-empty">아직 생성된 콘텐츠가 없어요</div>';
-      return;
-    }
-    const typeLabel = {youtube:'🎬 유튜브',shorts_batch:'⚡ 숏츠',face:'👤 얼굴분석',keyword_reels:'🔑 키워드 릴스'};
-    el.innerHTML = `
-      <table style="width:100%;border-collapse:collapse;font-size:13px">
-        <thead>
-          <tr style="border-bottom:2px solid #f3f4f6">
-            <th style="padding:10px;text-align:left;color:#6b7280;font-weight:600">유형</th>
-            <th style="padding:10px;text-align:left;color:#6b7280;font-weight:600">내용</th>
-            <th style="padding:10px;text-align:left;color:#6b7280;font-weight:600">생성일시</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${items.map(i=>`
-            <tr style="border-bottom:1px solid #f9fafb">
-              <td style="padding:10px">${typeLabel[i.type]||i.type}</td>
-              <td style="padding:10px;color:#1A1A1A">${i.preview||i.keyword||i.category||'-'}</td>
-              <td style="padding:10px;color:#9ca3af">${i.created_at||''}</td>
-            </tr>`).join('')}
-        </tbody>
-      </table>`;
+    if (!items.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><div>아직 생성된 콘텐츠가 없어요</div></div>'; return; }
+    const labels = {youtube:'🎬 유튜브', shorts_batch:'⚡ 숏츠', face:'👤 얼굴분석', keyword_reels:'🔑 키워드 릴스'};
+    el.innerHTML = '<div class="card"><table class="history-table"><thead><tr><th>유형</th><th>내용</th><th>생성일시</th></tr></thead><tbody>' +
+      items.map(i => '<tr><td>' + (labels[i.type]||i.type) + '</td><td style="color:#d1d5db">' + esc(i.preview||i.keyword||i.category||'-') + '</td><td>' + (i.created_at||'') + '</td></tr>').join('') +
+      '</tbody></table></div>';
   } catch(e) {
-    el.innerHTML='<div class="result-empty" style="color:#ef4444">로드 실패</div>';
+    el.innerHTML = '<div class="err-card">히스토리 로드 실패: ' + e.message + '</div>';
   }
 }
 
-function toggleScript(el) {
-  const sc = el.nextElementSibling;
-  if (sc.style.display==='block') { sc.style.display='none'; el.textContent='▶ 30초 대본 보기'; }
-  else { sc.style.display='block'; el.textContent='▼ 30초 대본 접기'; }
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 }
 </script>
 </body>
-</html>
-"""
+</html>"""
 
 @app.route('/content_ai')
 def content_ai_page():
