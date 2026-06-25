@@ -4194,8 +4194,8 @@ async function generateYoutube() {
           <div>
             <span style="font-size:10px;background:#e8f0fe;color:#4f8ef7;padding:2px 6px;border-radius:4px;margin-right:6px">SEO</span>
             <span style="font-size:13px;font-weight:600;color:#1A1A1A">${data.titles?.seo||''}</span>
-            <button class="copy-btn" style="margin-left:8px;padding:2px 8px;font-size:10px" onclick="copyText('${(data.titles?.seo||'').replace(/'/g,"\\\\'")}')">복사</button>
-          </div>
+            <span id="title-seo-'+(uid)+'" style="font-size:13px;font-weight:600;color:#1A1A1A">${data.titles?.seo||''}</span>
+            <button class="copy-btn" style="margin-left:8px;padding:2px 8px;font-size:10px" onclick="copyText(document.getElementById('title-seo-'+uid).textContent)">복사</button>
           <div>
             <span style="font-size:10px;background:#fff0e8;color:#f7934f;padding:2px 6px;border-radius:4px;margin-right:6px">궁금증</span>
             <span style="font-size:12px;color:#374151">${data.titles?.curiosity||''}</span>
