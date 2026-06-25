@@ -605,7 +605,7 @@ body{font-family:'Segoe UI','Noto Sans KR',sans-serif;background:#f0f2f5;color:#
 </div>
 <div class="header">
   <h1>팝성형외과 콘텐츠 허브</h1>
-  <p>AI 검색 노출 분석 · 콘텐츠 자동화 · 발행 관리</p>
+  <p>AI 검색 노출 분석 / 콘텐츠 자동화 / 발행 관리</p>
 </div>
 <div class="wrap">
 
@@ -620,7 +620,7 @@ body{font-family:'Segoe UI','Noto Sans KR',sans-serif;background:#f0f2f5;color:#
     </div>
     <div class="sov-actions">
       <button class="sov-btn measure" onclick="measureSOV()">▶ 지금 측정</button>
-      <button class="sov-btn detail" onclick="location.href='/sov'">상세 보기 →</button>
+      <button class="sov-btn detail" onclick="location.href='/sov'">상세 보기 -></button>
     </div>
   </div>
 
@@ -663,7 +663,7 @@ body{font-family:'Segoe UI','Noto Sans KR',sans-serif;background:#f0f2f5;color:#
     </div>
     <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center">
       <div style="font-size:12px;color:#a78bfa">지금은 <strong>발행 카드</strong>에서 한 번 실행할 단계예요</div>
-      <a href="/blog" style="padding:8px 16px;background:#1a1a2e;color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none">발행 카드 위치 보기 →</a>
+      <a href="/blog" style="padding:8px 16px;background:#1a1a2e;color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none">발행 카드 위치 보기 -></a>
     </div>
   </div>
 
@@ -671,18 +671,18 @@ body{font-family:'Segoe UI','Noto Sans KR',sans-serif;background:#f0f2f5;color:#
   <div style="background:#fff;border-radius:14px;padding:24px 28px;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:24px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <div>
-        <div style="font-size:11px;color:#9ca3af;font-weight:600;margin-bottom:4px">🗓 이번 주 자동화 · 분석·콘텐츠 통합</div>
+        <div style="font-size:11px;color:#9ca3af;font-weight:600;margin-bottom:4px">🗓 이번 주 자동화 / 분석/콘텐츠 통합</div>
         <div style="display:flex;align-items:center;gap:12px">
           <span style="font-size:16px;font-weight:700;color:#1a1a2e" id="week-label">이번 주</span>
         </div>
       </div>
-      <button onclick="location.href='/sov'" style="padding:8px 16px;background:#1a1a2e;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer">🔄 자동화 미리보기 →</button>
+      <button onclick="location.href='/sov'" style="padding:8px 16px;background:#1a1a2e;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer">🔄 자동화 미리보기 -></button>
     </div>
     <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px" id="week-calendar">
     </div>
   </div>
 
-  <div class="auto-badge">🔄 이번 주 자동화 · 분석·콘텐츠 통합</div>
+  <div class="auto-badge">🔄 이번 주 자동화 / 분석/콘텐츠 통합</div>
 
   <!-- 3단계 카드 -->
   <div class="cards">
@@ -698,7 +698,7 @@ body{font-family:'Segoe UI','Noto Sans KR',sans-serif;background:#f0f2f5;color:#
         <a href="/sov#keywords" class="feat"><span class="feat-icon">🔍</span> AI 검색 키워드 <span class="feat-extra" id="feat-kw">--</span></a>
         <a href="/sov#ranking" class="feat"><span class="feat-icon">🏆</span> 경쟁사 랭킹</a>
       </div>
-      <a href="/sov" class="btn">노출 확인하기 →</a>
+      <a href="/sov" class="btn">노출 확인하기 -></a>
     </div>
 
     <!-- 2. 실행 -->
@@ -712,7 +712,7 @@ body{font-family:'Segoe UI','Noto Sans KR',sans-serif;background:#f0f2f5;color:#
         <a href="/youtube" class="feat"><span class="feat-icon">🎬</span> 유튜브 스크립트 <span class="feat-extra" id="feat-yt">오늘 --개</span></a>
         <a href="/cardnews" class="feat"><span class="feat-icon">🖼</span> 카드뉴스</a>
       </div>
-      <a href="/blog" class="btn accent">콘텐츠 만들기 →</a>
+      <a href="/blog" class="btn accent">콘텐츠 만들기 -></a>
     </div>
 
     <!-- 3. 발행 -->
@@ -892,7 +892,7 @@ def index():
     return render_template_string(HTML)
 
 
-# ── 홈에서 블로그/매거진 생성 버튼 API ────────────────────────────
+# -- 홈에서 블로그/매거진 생성 버튼 API ----------------------------
 
 BLOG_RUN_PATH = BASE_DIR / "run.py"
 MAGAZINE_RUN_PATH = BASE_DIR / "magazine_run.py"
@@ -1299,13 +1299,13 @@ def api_yt_generate():
         cmd = ["python", "youtube_script.py"]
         if cat:
             cmd += ["--category", cat]
-        # 10편 병렬 생성 — 넉넉하게 10분
+        # 10편 병렬 생성 - 넉넉하게 10분
         result = _sp.run(cmd, cwd=YT_DIR, capture_output=True, text=True, timeout=600)
         if result.returncode != 0:
             return jsonify({"success": False, "error": result.stderr[-2000:]})
         return jsonify({"success": True})
     except _sp.TimeoutExpired:
-        return jsonify({"success": False, "error": "timeout — 생성 시간 초과 (10분)"})
+        return jsonify({"success": False, "error": "timeout - 생성 시간 초과 (10분)"})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
 
@@ -1315,7 +1315,7 @@ MAG_HTML = r"""
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>팝성형외과 · 매거진</title>
+<title>팝성형외과 / 매거진</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI','Noto Sans KR',sans-serif;background:#f0f2f5;color:#333}
@@ -1376,7 +1376,7 @@ iframe{width:100%;height:100%;min-height:620px;border:1px solid #eee;border-radi
   <a href="/cardnews">🖼 카드뉴스</a>
   <a href="/threads">🧵 스레드</a>
 </div>
-<div class="header"><h1>📰 팝성형외과 매거진</h1><span style="font-size:12px;color:#aaa">발행용 HTML · 복사하여 붙여넣기</span></div>
+<div class="header"><h1>📰 팝성형외과 매거진</h1><span style="font-size:12px;color:#aaa">발행용 HTML / 복사하여 붙여넣기</span></div>
 
 <div class="bar">
   <select id="dateSel" onchange="render()"></select>
@@ -1398,7 +1398,7 @@ iframe{width:100%;height:100%;min-height:620px;border:1px solid #eee;border-radi
     <option value="코성형">코성형</option>
   </select>
   <button class="chip" style="background:#6355e8;color:#fff;border-color:#6355e8;font-weight:600" onclick="genMag(this)">▶ 매거진 생성</button>
-  <button class="chip" id="btnDay" style="background:#1a1a2e;color:#fff;border-color:#1a1a2e;font-weight:700" onclick="genDay(this)" title="눈5·리프팅5·코5 = 15편을 순차 생성합니다 (몇 분 소요)">▶ 하루 15편 생성</button>
+  <button class="chip" id="btnDay" style="background:#1a1a2e;color:#fff;border-color:#1a1a2e;font-weight:700" onclick="genDay(this)" title="눈5/리프팅5/코5 = 15편을 순차 생성합니다 (몇 분 소요)">▶ 하루 15편 생성</button>
 </div>
 
 <div class="wrap">
@@ -1412,7 +1412,7 @@ iframe{width:100%;height:100%;min-height:620px;border:1px solid #eee;border-radi
     </div>
     <div class="imgset">
       <span class="imgset-label">사람 이미지 URL</span>
-      <input type="text" id="imgUrl" placeholder="Higgsfield 이미지 URL 붙여넣기 (https://...) · 비우고 저장하면 제거" disabled>
+      <input type="text" id="imgUrl" placeholder="Higgsfield 이미지 URL 붙여넣기 (https://...) / 비우고 저장하면 제거" disabled>
       <button class="btn p" id="btnImg" onclick="saveImage()" disabled>이미지 저장</button>
     </div>
     <div id="metaPanel" class="metapanel"></div>
@@ -1422,7 +1422,7 @@ iframe{width:100%;height:100%;min-height:620px;border:1px solid #eee;border-radi
     </div>
   </div>
 </div>
-<div class="note">※ ‘본문 복사(서식)’은 네이버·티스토리 등 에디터에 붙여넣으면 제목·문단·FAQ가 서식째 들어가요(일부 에디터는 배경 스타일·인포그래픽을 단순화할 수 있어요). ‘HTML 소스 복사’는 HTML 편집 모드/자체 CMS용 전체 소스예요. 카드 이미지는 블로그 탭의 카드 복사 버튼과 함께 쓰면 됩니다.<br>※ 본 산출물은 정보 제공용이며, 전후사진·효과 표현 등은 게시 전 의료광고 심의를 거쳐야 합니다.</div>
+<div class="note">※ ‘본문 복사(서식)'은 네이버/티스토리 등 에디터에 붙여넣으면 제목/문단/FAQ가 서식째 들어가요(일부 에디터는 배경 스타일/인포그래픽을 단순화할 수 있어요). ‘HTML 소스 복사'는 HTML 편집 모드/자체 CMS용 전체 소스예요. 카드 이미지는 블로그 탭의 카드 복사 버튼과 함께 쓰면 됩니다.<br>※ 본 산출물은 정보 제공용이며, 전후사진/효과 표현 등은 게시 전 의료광고 심의를 거쳐야 합니다.</div>
 
 <script>
 let DATA={dates:[],posts_by_date:{}}, CAT='all', PUB='all', CURID=null, CURHTML='', CURPOST=null, CURHERO='', CURMETA=null, CURBODY='', CURHEROISPHOTO=false;
@@ -1471,7 +1471,7 @@ async function pick(id){
   let cat, title, kw, desc;
 
   if (isHtml) {
-    // HTML 콘텐츠 — 그대로 iframe에 표시
+    // HTML 콘텐츠 - 그대로 iframe에 표시
     cat = p.category || '';
     title = p.title || p.keyword || '';
     kw = p.keyword || '';
@@ -1515,7 +1515,7 @@ async function pick(id){
 async function saveImage(){
   if(!CURPOST)return;
   const url=document.getElementById('imgUrl').value.trim();
-  const b=document.getElementById('btnImg'); const old=b.textContent; b.disabled=true; b.textContent='저장 중…';
+  const b=document.getElementById('btnImg'); const old=b.textContent; b.disabled=true; b.textContent='저장 중...';
   try{
     const r=await fetch('/api/mag/set_image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date:CURPOST.date,filename:CURPOST.filename,url:url})});
     const d=await r.json();
@@ -1535,9 +1535,9 @@ function renderMeta(m){
     ['SEO 키워드', m.seokw],
     ['SEO 설명', m.seodesc]
   ];
-  let html='<div class="metahead">📋 메타 — 폼 항목에 따로 입력 (본문 복사에는 포함되지 않아요)</div>';
+  let html='<div class="metahead">📋 메타 - 폼 항목에 따로 입력 (본문 복사에는 포함되지 않아요)</div>';
   html+=rows.map(r=>'<div class="metarow"><div class="mlabel">'+esc(r[0])+'</div><div class="mval" title="'+esc(r[1]||'')+'">'+esc(r[1]||'')+'</div><button class="mcopy" onclick="copyField(this)">복사</button></div>').join('');
-  html+='<div class="metarow"><div class="mlabel">대표 썸네일 · OG</div><div class="mval"><img src="'+CURHERO+'" style="height:50px;border-radius:6px;border:1px solid #eee;vertical-align:middle"></div><button class="mcopy" onclick="dlThumb()">PNG 다운로드</button></div>';
+  html+='<div class="metarow"><div class="mlabel">대표 썸네일 / OG</div><div class="mval"><img src="'+CURHERO+'" style="height:50px;border-radius:6px;border:1px solid #eee;vertical-align:middle"></div><button class="mcopy" onclick="dlThumb()">PNG 다운로드</button></div>';
   document.getElementById('metaPanel').innerHTML=html;
 }
 function copyField(btn){
@@ -1591,7 +1591,7 @@ function hero(cat,title){
   return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 405">'
     +'<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fdf8f5"/><stop offset="1" stop-color="#f3e7dd"/></linearGradient></defs>'
     +'<rect width="720" height="405" fill="url(#g)"/><g stroke="#e7d8cc" stroke-width="1" opacity=".55"><line x1="0" y1="135" x2="720" y2="135"/><line x1="0" y1="270" x2="720" y2="270"/></g>'
-    +'<text x="56" y="150" font-family="Georgia,serif" font-size="13" letter-spacing="4" fill="#b07d62" font-weight="700">'+esc((cat||'').toUpperCase())+' · 팝성형외과</text>'
+    +'<text x="56" y="150" font-family="Georgia,serif" font-size="13" letter-spacing="4" fill="#b07d62" font-weight="700">'+esc((cat||'').toUpperCase())+' / 팝성형외과</text>'
     +tspans
     +'<line x1="56" y1="350" x2="300" y2="350" stroke="#d4a882" stroke-width="2"/></svg>';
 }
@@ -1605,7 +1605,7 @@ function compareSVG(c){
   const L=(c.litems||[]).slice(0,5), R=(c.ritems||[]).slice(0,5);
   const n=Math.max(L.length,R.length,1), h=104+n*40;
   const li=L.map((t,i)=>'<text x="40" y="'+(104+i*40)+'" font-family="\'Noto Sans KR\',sans-serif" font-size="14" fill="#3a3a3a">✓ '+esc(t)+'</text>').join('');
-  const ri=R.map((t,i)=>'<text x="392" y="'+(104+i*40)+'" font-family="\'Noto Sans KR\',sans-serif" font-size="14" fill="#5a4d42">· '+esc(t)+'</text>').join('');
+  const ri=R.map((t,i)=>'<text x="392" y="'+(104+i*40)+'" font-family="\'Noto Sans KR\',sans-serif" font-size="14" fill="#5a4d42">/ '+esc(t)+'</text>').join('');
   return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 '+h+'"><rect width="720" height="'+h+'" fill="#fff"/><rect width="360" height="'+h+'" fill="#fdf8f5"/><line x1="360" y1="28" x2="360" y2="'+(h-22)+'" stroke="#ece6e0"/><text x="40" y="58" font-family="\'Noto Sans KR\',sans-serif" font-size="12" font-weight="700" letter-spacing="1" fill="#b07d62">'+esc(c.lt||'')+'</text><text x="392" y="58" font-family="\'Noto Sans KR\',sans-serif" font-size="12" font-weight="700" letter-spacing="1" fill="#8a7b6e">'+esc(c.rt||'')+'</text>'+li+ri+'</svg>';
 }
 function dataCardSVG(d){
@@ -1616,7 +1616,7 @@ function dataCardSVG(d){
 function autoPoints(bodyArr){
   const text=(bodyArr||[]).join(' ');
   let parts=text.split(/(?<=[.!?])\s+/).map(x=>x.trim()).filter(x=>x.length>4);
-  parts=parts.slice(0,3).map(x=>x.length>30?x.slice(0,29)+'…':x);
+  parts=parts.slice(0,3).map(x=>x.length>30?x.slice(0,29)+'...':x);
   return parts.length?parts:['핵심 포인트'];
 }
 function parsePost(content){
@@ -1672,7 +1672,7 @@ function bodyInner(P,cat,title,cards,kw){
       +'</section>';
   }
   const ctaLabel=((kw||title||'').trim()||'더')+' 보러 가기';
-  html+='<div class="mag-cta-wrap"><a class="mag-cta" href="https://pop-ps.com/main" target="_blank" rel="noopener">'+esc(ctaLabel)+' →</a></div>';
+  html+='<div class="mag-cta-wrap"><a class="mag-cta" href="https://pop-ps.com/main" target="_blank" rel="noopener">'+esc(ctaLabel)+' -></a></div>';
   html+='<div class="mag-closing"><p class="mag-closing-title">'+esc(title)+'</p><p class="mag-closing-body">본 아티클은 정보 제공 목적이며, 정확한 진단과 치료 방법은 전문의와의 상담을 통해 결정하시기 바랍니다.</p></div>';
   return html;
 }
@@ -1684,35 +1684,35 @@ function buildFull(P,cat,title,kw,desc,hero,bodyHtml){
     +'<meta property="og:type" content="article"><meta property="og:title" content="'+esc(title)+'"><meta property="og:description" content="'+esc(desc)+'"><meta property="og:image" content="'+hero+'"><meta property="og:locale" content="ko_KR">'
     +'<script type="application/ld+json">'+JSON.stringify(ldA)+'<\/script>'+(P.faq.length?'<script type="application/ld+json">'+JSON.stringify(ldF)+'<\/script>':'')
     +'<style>@import url(\'https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@500;700&display=swap\');'+CSS+'</style></head><body>'
-    +'<article class="mag-wrap"><p class="mag-tag">'+esc(cat)+' · 팝성형외과</p><h1 class="mag-title">'+esc(title)+'</h1>'
+    +'<article class="mag-wrap"><p class="mag-tag">'+esc(cat)+' / 팝성형외과</p><h1 class="mag-title">'+esc(title)+'</h1>'
     +'<figure><img class="mag-hero" src="'+hero+'" width="720" height="405" alt="'+esc(cat+' '+title+' 대표 이미지')+'"></figure>'
     +bodyHtml+'</article></body></html>';
 }
 function toast(m){let t=document.getElementById('__t');if(!t){t=document.createElement('div');t.id='__t';t.style.cssText='position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1a1a2e;color:#fff;padding:12px 22px;border-radius:24px;font-size:13px;z-index:9999;transition:opacity .3s';document.body.appendChild(t);}t.textContent=m;t.style.opacity='1';clearTimeout(t._h);t._h=setTimeout(()=>t.style.opacity='0',1800);}
 async function copySrc(){if(!CURHTML)return;try{await navigator.clipboard.writeText(CURHTML);toast('HTML 소스 복사 완료 (전체 페이지)');}catch(e){const w=window.open('','_blank');w.document.write('<pre>'+esc(CURHTML)+'</pre>');}}
 async function copyRich(){if(!CURBODY)return;const body=CURBODY;
-  try{await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([body],{type:'text/html'}),'text/plain':new Blob([(CURPOST&&CURPOST.content)||'',],{type:'text/plain'})})]);toast('본문 복사 완료 · 메타 제외 (에디터 본문에 붙여넣기)');}
+  try{await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([body],{type:'text/html'}),'text/plain':new Blob([(CURPOST&&CURPOST.content)||'',],{type:'text/plain'})})]);toast('본문 복사 완료 / 메타 제외 (에디터 본문에 붙여넣기)');}
   catch(e){try{await navigator.clipboard.writeText(body);toast('본문 복사 완료');}catch(_){alert('복사 실패: 브라우저 권한 확인');}}}
 async function genMag(btn){
   const cat=document.getElementById('genCat').value;
-  const old=btn.textContent; btn.disabled=true; btn.textContent='생성 중… (최대 1~2분)';
+  const old=btn.textContent; btn.disabled=true; btn.textContent='생성 중... (최대 1~2분)';
   try{
     const r=await fetch('/api/mag/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({category:cat})});
     const d=await r.json();
-    if(d.ok){ await boot(); toast('생성 완료 · '+d.created+'개'+((d.errors&&d.errors.length)?(' (일부 실패 '+d.errors.length+')'):'')); }
+    if(d.ok){ await boot(); toast('생성 완료 / '+d.created+'개'+((d.errors&&d.errors.length)?(' (일부 실패 '+d.errors.length+')'):'')); }
     else { alert('실패: '+(d.error||'')); }
   }catch(e){ alert('오류: '+e.message); }
   finally{ btn.disabled=false; btn.textContent=old; }
 }
 async function genDay(btn){
   const plan=[].concat(Array(5).fill('눈성형'),Array(5).fill('리프팅'),Array(5).fill('코성형'));
-  if(!confirm('하루 15편(눈5·리프팅5·코5)을 생성할까요?\n몇 분 정도 걸려요. 이 탭을 닫지 마세요.')) return;
+  if(!confirm('하루 15편(눈5/리프팅5/코5)을 생성할까요?\n몇 분 정도 걸려요. 이 탭을 닫지 마세요.')) return;
   const old=btn.textContent; btn.disabled=true;
   const gm=document.getElementById('genCat'); const gmBtn=document.querySelector('[onclick="genMag(this)"]');
   if(gmBtn) gmBtn.disabled=true; if(gm) gm.disabled=true;
   let ok=0, fail=0;
   for(let i=0;i<plan.length;i++){
-    btn.textContent='생성 중 '+(i+1)+'/15 ('+plan[i]+')…';
+    btn.textContent='생성 중 '+(i+1)+'/15 ('+plan[i]+')...';
     try{
       const r=await fetch('/api/mag/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({category:plan[i]})});
       const d=await r.json();
@@ -1721,7 +1721,7 @@ async function genDay(btn){
     try{ await boot(); }catch(e){}
   }
   btn.disabled=false; if(gmBtn) gmBtn.disabled=false; if(gm) gm.disabled=false; btn.textContent=old;
-  toast('하루 15편 완료 · 성공 '+ok+(fail?(' / 실패 '+fail):''));
+  toast('하루 15편 완료 / 성공 '+ok+(fail?(' / 실패 '+fail):''));
 }
 boot();
 </script>
@@ -1839,7 +1839,7 @@ def serve_mag_card(date, folder_name, filename):
 
 # ════════════════════════════════════════════
 # 매거진 생성기 (스타일 가이드 핵심 규칙 = 코드 내장 / 파일 의존 없음)
-#   대시보드에서 직접 Anthropic API 호출 → magazine/<날짜>/*.txt 저장
+#   대시보드에서 직접 Anthropic API 호출 -> magazine/<날짜>/*.txt 저장
 #   .env 에 ANTHROPIC_API_KEY 필요
 # ════════════════════════════════════════════
 MAG_MODEL = "claude-sonnet-4-6"   # 더 강한 품질을 원하면 "claude-opus-4-8" 등으로 변경
@@ -1847,19 +1847,19 @@ MAG_MODEL = "claude-sonnet-4-6"   # 더 강한 품질을 원하면 "claude-opus-
 # 스타일 가이드 핵심 규칙(코드 내장). 가이드가 바뀌면 이 문자열만 손보면 됩니다.
 MAG_STYLE_RULES = (
     "당신은 한국 성형외과 '팝성형외과'의 의료 콘텐츠 작가입니다. 아래 스타일을 반드시 지킵니다.\n"
-    "[말투] 해요체 중심(~에요/예요/죠/수 있어요). 사실·정의·권고 문장만 합니다체 일부 혼용. 따뜻하고 차분한 상담 어조. 이모지 금지.\n"
-    "[도입] 공감 질문 → 통념 반전('~가 아닐 수도 있어요') → 글 목적 안내, 3단으로.\n"
+    "[말투] 해요체 중심(~에요/예요/죠/수 있어요). 사실/정의/권고 문장만 합니다체 일부 혼용. 따뜻하고 차분한 상담 어조. 이모지 금지.\n"
+    "[도입] 공감 질문 -> 통념 반전('~가 아닐 수도 있어요') -> 글 목적 안내, 3단으로.\n"
     "[본문] 질문형 소제목 4개(예: '~나요?' '~까요?'). 각 섹션 첫 문장은 핵심을 한 문장으로 명료히 정의. 의학 용어는 쓴 즉시 쉬운 말로 풀이.\n"
-    "[금지] 단정·보장·최상급(최고/유일/1위/100%/반드시), 경쟁 병원 비방, 가격·이벤트 등 환자 유인 표현. 효과는 '~할 수 있어요/경우가 많아요/개인마다 달라요'로 서술.\n"
-    "[리프팅 범위] 울쎄라·써마지 등 장비 브랜드 시술은 자사 시술로 소개·추천 금지. 비교 목적 언급만 가능하며 우열 단정 금지(중립적 차이 설명). 보톡스·필러 등 주사 시술류는 다루지 않음.\n"
+    "[금지] 단정/보장/최상급(최고/유일/1위/100%/반드시), 경쟁 병원 비방, 가격/이벤트 등 환자 유인 표현. 효과는 '~할 수 있어요/경우가 많아요/개인마다 달라요'로 서술.\n"
+    "[리프팅 범위] 울쎄라/써마지 등 장비 브랜드 시술은 자사 시술로 소개/추천 금지. 비교 목적 언급만 가능하며 우열 단정 금지(중립적 차이 설명). 보톡스/필러 등 주사 시술류는 다루지 않음.\n"
     "[FAQ] 자연어 질문 3개와 해요체 답변(각 2~3문장).\n"
 )
 
 # 카테고리별 주제 범위(코드 내장)
 MAG_CAT_SCOPE = {
     "눈성형": "쌍꺼풀, 눈매교정, 트임, 눈재수술, 지방재배치 등 눈 성형",
-    "리프팅": "안면거상(수술)과 실리프팅 중심 (주사 시술류·장비 브랜드 시술 제외, 비교만 가능)",
-    "코성형": "융비술, 콧대·코끝 성형, 코재수술, 휜코·매부리코 교정 등 코 성형",
+    "리프팅": "안면거상(수술)과 실리프팅 중심 (주사 시술류/장비 브랜드 시술 제외, 비교만 가능)",
+    "코성형": "융비술, 콧대/코끝 성형, 코재수술, 휜코/매부리코 교정 등 코 성형",
 }
 
 
@@ -1919,7 +1919,7 @@ def _mag_clean(text, cat, today):
 
 
 def _mag_call(category, recent):
-    """Anthropic API 직접 호출 → .txt 본문(플레인 텍스트) 반환"""
+    """Anthropic API 직접 호출 -> .txt 본문(플레인 텍스트) 반환"""
     import os
     import urllib.request as urlreq
     key = os.environ.get("ANTHROPIC_API_KEY", "")
@@ -1933,8 +1933,8 @@ def _mag_call(category, recent):
         "이 카테고리 범위: " + scope + "\n"
         + avoid +
         "위 범위에서 적절한 주제 1개를 직접 정해 글을 쓰세요.\n\n"
-        "반드시 아래 '플레인 텍스트' 형식으로만 출력하세요. 마크다운 코드펜스(```)·해설·머리말 금지.\n"
-        "헤더 항목은 한 줄씩 그대로, 소제목은 반드시 '## '로 시작, FAQ는 'Q1.'·'A1.' 형식을 지키세요.\n"
+        "반드시 아래 '플레인 텍스트' 형식으로만 출력하세요. 마크다운 코드펜스(```)/해설/머리말 금지.\n"
+        "헤더 항목은 한 줄씩 그대로, 소제목은 반드시 '## '로 시작, FAQ는 'Q1.'/'A1.' 형식을 지키세요.\n"
         "--- 형식 시작 ---\n"
         "카테고리: " + category + "\n"
         "키워드: <핵심 키워드 1개>\n"
@@ -1947,7 +1947,7 @@ def _mag_call(category, recent):
         "게시일시: \n"
         "생성일: " + today_kr + "\n"
         "==============================\n"
-        "<도입 2~3문장: 공감 질문 → 통념 반전 → 목적 안내>\n\n"
+        "<도입 2~3문장: 공감 질문 -> 통념 반전 -> 목적 안내>\n\n"
         "## <질문형 소제목 1>\n<2~3문장, 첫 문장은 핵심 정의>\n[핵심] <항목1> | <항목2> | <항목3>\n\n"
         "## <질문형 소제목 2>\n<2~3문장>\n[핵심] <항목1> | <항목2> | <항목3>\n\n"
         "## <질문형 소제목 3>\n<2~3문장>\n[핵심] <항목1> | <항목2> | <항목3>\n\n"
@@ -1959,7 +1959,7 @@ def _mag_call(category, recent):
         "Q2. <질문>\nA2. <답변>\n"
         "Q3. <질문>\nA3. <답변>\n"
         "--- 형식 끝 ---\n"
-        "주의: '## ' 소제목 4개(각 뒤에 '[핵심]' 한 줄), 'Q1./A1.' FAQ 3개, '[인포그래픽]'·'[비교]'·'[데이터]' 각 1줄을 반드시 포함하세요. "
+        "주의: '## ' 소제목 4개(각 뒤에 '[핵심]' 한 줄), 'Q1./A1.' FAQ 3개, '[인포그래픽]'/'[비교]'/'[데이터]' 각 1줄을 반드시 포함하세요. "
         "[비교]의 항목은 세미콜론(;)으로, 칸은 막대(|)로 구분합니다. [데이터]의 값은 '1~2년','2주' 같은 짧은 수치로 적으세요.\n"
     )
     body = json.dumps({
@@ -1987,7 +1987,7 @@ def _mag_call(category, recent):
 #   .env 에 아래가 모두 설정돼야 동작합니다. 하나라도 없으면 이미지 단계를 조용히 건너뛰고
 #   대시보드는 기존 SVG 히어로로 폴백해요(글 생성은 절대 안 깨짐).
 #     HIGGSFIELD_API_KEY      = <발급키>
-#     HIGGSFIELD_CREATE_URL   = <이미지 생성 POST 엔드포인트>      ← 본인 API 문서대로
+#     HIGGSFIELD_CREATE_URL   = <이미지 생성 POST 엔드포인트>      <- 본인 API 문서대로
 #     HIGGSFIELD_RESULT_URL   = <결과 조회 GET 엔드포인트, {id} 포함>  (동기 응답이면 생략 가능)
 #   선택: HIGGSFIELD_API_SECRET, HIGGSFIELD_IMAGE_MODEL(기본 recraft-v4-1),
 #         HIGGSFIELD_AUTH_HEADER(기본 hf-api-key)
@@ -2048,7 +2048,7 @@ def hf_generate_image(prompt, aspect_ratio="16:9", model=""):
     key = os.environ.get("HIGGSFIELD_API_KEY", "")
     create = os.environ.get("HIGGSFIELD_CREATE_URL", "")
     if not key or not create:
-        return ""   # 미설정 → 이미지 단계 건너뜀
+        return ""   # 미설정 -> 이미지 단계 건너뜀
     auth_header = os.environ.get("HIGGSFIELD_AUTH_HEADER", "hf-api-key")
     headers = {"Content-Type": "application/json", auth_header: key}
     secret = os.environ.get("HIGGSFIELD_API_SECRET", "")
@@ -2100,7 +2100,7 @@ def _extract_keyword(text):
     return ""
 
 
-#   매거진 생성은 magazine_run.py 로 위임합니다 (FAQ 스키마·내부 링크·말투/감수자 최적화 포함).
+#   매거진 생성은 magazine_run.py 로 위임합니다 (FAQ 스키마/내부 링크/말투/감수자 최적화 포함).
 #   magazine_run.py 위치: 기본은 대시보드와 같은 폴더. 다르면 .env 의 MAGAZINE_RUN_PATH 로 지정.
 MAGAZINE_RUN_PATH = Path(os.environ.get("MAGAZINE_RUN_PATH", str(BASE_DIR / "magazine_run.py")))
 
@@ -2161,8 +2161,8 @@ def magazine_page():
 
 
 # ============================================================
-#   카드뉴스(인스타 캐러셀) 탭 — node generate.mjs + render.mjs 를 버튼으로
-#   덱 개수만큼 생성하고, 각 덱(8장)을 decks/<배치>/deck-NN/ 에 보관·미리보기
+#   카드뉴스(인스타 캐러셀) 탭 - node generate.mjs + render.mjs 를 버튼으로
+#   덱 개수만큼 생성하고, 각 덱(8장)을 decks/<배치>/deck-NN/ 에 보관/미리보기
 # ============================================================
 import os as _cn_os
 from pathlib import Path as _CNPath
@@ -2230,7 +2230,7 @@ body{background:#f5f5f7;color:#1a1a2e;font-family:'Noto Sans KR',sans-serif;min-
   </div>
 </div>
 <div class="wrap">
-  <div class="hint">주제를 비우면 자동 주제로 만들어요. 덱마다 레이아웃이 달라져요(타이포 · 인포그래픽 · 단색). ‘사진 포함’은 <b>assets/images/</b> 에 cover.png · card03.png · cta.png 가 있을 때만 사진 카드가 들어가요(사진은 이 채팅에서 받아 그 폴더에 넣어두세요). 썸네일을 클릭하면 원본 PNG가 열려요.</div>
+  <div class="hint">주제를 비우면 자동 주제로 만들어요. 덱마다 레이아웃이 달라져요(타이포 / 인포그래픽 / 단색). ‘사진 포함'은 <b>assets/images/</b> 에 cover.png / card03.png / cta.png 가 있을 때만 사진 카드가 들어가요(사진은 이 채팅에서 받아 그 폴더에 넣어두세요). 썸네일을 클릭하면 원본 PNG가 열려요.</div>
   <div id="results"><div class="empty">불러오는 중...</div></div>
 </div>
 <div class="overlay" id="overlay"><div class="spinner"></div><div class="overlaytext" id="ovtext">생성 중...</div></div>
@@ -2242,9 +2242,9 @@ async function loadDecks(){
     const r=await fetch('/api/cn/decks');const b=await r.json();
     if(!b.length){el.innerHTML='<div class="empty">아직 생성된 카드뉴스가 없어요. 위에서 ▶ 생성을 눌러보세요.</div>';return;}
     el.innerHTML=b.map(batch=>`
-      <div class="batch"><h3>📅 ${batch.batch} · ${batch.decks.length}덱</h3>
+      <div class="batch"><h3>📅 ${batch.batch} / ${batch.decks.length}덱</h3>
       ${batch.decks.map(d=>`
-        <div class="deck"><div class="dlabel">${d.deck} · ${d.images.length}장</div>
+        <div class="deck"><div class="dlabel">${d.deck} / ${d.images.length}장</div>
         <div class="cards">${d.images.map(img=>{
           const src='/cnimg/'+batch.batch+'/'+d.deck+'/'+img;
           return '<img src="'+src+'" onclick="openImg(this.src)" title="'+img+'">';
@@ -2258,7 +2258,7 @@ async function generate(){
   const photos=document.getElementById('photos').checked;
   const btn=document.querySelector('.btn-gen');const ov=document.getElementById('overlay');
   btn.disabled=true;ov.classList.add('show');
-  document.getElementById('ovtext').textContent=count+'개 덱 생성 중... (글·렌더 때문에 몇 분 걸려요. 탭을 닫지 마세요)';
+  document.getElementById('ovtext').textContent=count+'개 덱 생성 중... (글/렌더 때문에 몇 분 걸려요. 탭을 닫지 마세요)';
   try{
     const r=await fetch('/api/cn/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:topic,count:count,photos:photos})});
     const d=await r.json();
@@ -2308,7 +2308,7 @@ def serve_cn_image(batch, deck, filename):
 
 
 def _cn_make_photos(cn_dir):
-    """photo-jobs.json 을 읽어 Higgsfield REST 로 사진 생성 → assets/images/<file> 저장.
+    """photo-jobs.json 을 읽어 Higgsfield REST 로 사진 생성 -> assets/images/<file> 저장.
        반환: dict(made, total, configured). HF 미설정이면 configured=False (사진 단계 건너뜀)."""
     import urllib.request as _ur
     jobs_file = cn_dir / "photo-jobs.json"
@@ -2383,7 +2383,7 @@ def api_cn_generate():
             if r1.returncode != 0:
                 return jsonify({"success": False, "error": "덱 %d 글 생성 실패: %s" % (i, (r1.stderr or r1.stdout or "").strip())})
 
-            # 사진 모드면 photo-jobs.json 의 프롬프트로 Higgsfield 공식 SDK 사진 생성 → assets/images/
+            # 사진 모드면 photo-jobs.json 의 프롬프트로 Higgsfield 공식 SDK 사진 생성 -> assets/images/
             if photos and (cn_dir / "photos.mjs").exists():
                 rp = _sp.run(["node", "photos.mjs"], cwd=str(cn_dir), capture_output=True, text=True, timeout=600, env=env)
                 line = ""
@@ -2455,15 +2455,15 @@ body{font-family:'Segoe UI','Noto Sans KR',sans-serif;background:#f0f2f5;color:#
   <a href="/cardnews">🖼 카드뉴스</a>
   <a href="/threads" class="on">🧵 스레드</a>
 </div>
-<div class="header"><h1>🧵 POP 스레드 대시보드</h1><span>24년차 전문의 톤 · 하루 10개 짧은 글</span></div>
+<div class="header"><h1>🧵 POP 스레드 대시보드</h1><span>24년차 전문의 톤 / 하루 10개 짧은 글</span></div>
 <div class="wrap">
   <div class="panel">
     <div class="controls">
       <button class="btn p" id="genBtn" onclick="generateThreads()">오늘 10개 생성/업데이트</button>
       <button class="btn" onclick="loadData()">새로고침</button>
-      <span class="guide">비율: 참여형 3 · 정보형 5 · 일상형 2 / 길이: 짧게 / 말투: ~요</span>
+      <span class="guide">비율: 참여형 3 / 정보형 5 / 일상형 2 / 길이: 짧게 / 말투: ~요</span>
     </div>
-    <div class="mix"><span>첫 문장 훅</span><span>댓글 유도</span><span>의료광고 안전표현</span><span>마라톤·책·마케팅·강아지 일상 반영</span></div>
+    <div class="mix"><span>첫 문장 훅</span><span>댓글 유도</span><span>의료광고 안전표현</span><span>마라톤/책/마케팅/강아지 일상 반영</span></div>
     <div class="date-tabs" id="dateTabs"></div>
   </div>
   <div class="stats" id="stats"></div>
@@ -2477,7 +2477,7 @@ function renderDates(){const el=document.getElementById('dateTabs');el.innerHTML
 function curPosts(){return (DATA.posts_by_date[CUR]||[])}
 function renderStats(){const p=curPosts();const c=t=>p.filter(x=>x.type===t).length;const done=p.filter(x=>x.published).length;document.getElementById('stats').innerHTML=`<div class="stat"><div class="l">전체 / 발행완료</div><div class="v">${p.length} / ${done}</div></div><div class="stat"><div class="l">참여형</div><div class="v">${c('참여형')}</div></div><div class="stat"><div class="l">정보형</div><div class="v">${c('정보형')}</div></div><div class="stat"><div class="l">일상형</div><div class="v">${c('일상형')}</div></div>`;}
 function esc(s){return String(s||'').replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));}
-function renderList(){const p=curPosts();const el=document.getElementById('list');if(!p.length){el.innerHTML='<div class="empty">아직 생성된 스레드가 없어요. 오늘 10개 생성을 눌러주세요.</div>';return;}el.innerHTML=p.map((x,i)=>`<div class="card ${x.published?'done':''}"><div class="meta"><span class="badge b-${x.type}">${x.type}</span><span class="num">#${i+1} · ${x.length}자</span></div><div class="text" id="t-${x.id}">${esc(x.text)}</div><div class="actions"><button class="small copy" onclick="copyText('${x.id}')">복사</button><button class="small pub" onclick="togglePub('${x.id}')">${x.published?'✅ 발행완료':'⬜ 미발행'}</button></div></div>`).join('');}
+function renderList(){const p=curPosts();const el=document.getElementById('list');if(!p.length){el.innerHTML='<div class="empty">아직 생성된 스레드가 없어요. 오늘 10개 생성을 눌러주세요.</div>';return;}el.innerHTML=p.map((x,i)=>`<div class="card ${x.published?'done':''}"><div class="meta"><span class="badge b-${x.type}">${x.type}</span><span class="num">#${i+1} / ${x.length}자</span></div><div class="text" id="t-${x.id}">${esc(x.text)}</div><div class="actions"><button class="small copy" onclick="copyText('${x.id}')">복사</button><button class="small pub" onclick="togglePub('${x.id}')">${x.published?'✅ 발행완료':'⬜ 미발행'}</button></div></div>`).join('');}
 async function generateThreads(){const btn=document.getElementById('genBtn');btn.disabled=true;btn.textContent='생성 중...';try{const r=await fetch('/api/threads/generate',{method:'POST'});const d=await r.json();if(!d.success)alert(d.error||'생성 실패');CUR=d.date||CUR;await loadData();CUR=d.date||CUR;render();}catch(e){alert('오류: '+e.message)}finally{btn.disabled=false;btn.textContent='오늘 10개 생성/업데이트';}}
 async function togglePub(id){const r=await fetch('/api/threads/toggle',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});const d=await r.json();for(const date in DATA.posts_by_date){DATA.posts_by_date[date].forEach(x=>{if(x.id===id)x.published=d.published;});}render();}
 function copyText(id){const el=document.getElementById('t-'+id);navigator.clipboard.writeText(el.innerText).then(()=>alert('복사 완료!'));}
@@ -2509,17 +2509,17 @@ def _safe_short(text, limit=170):
     text = " ".join((text or "").split())
     if len(text) <= limit:
         return text
-    return text[:limit-1].rstrip() + "…"
+    return text[:limit-1].rstrip() + "..."
 
 def _default_threads():
     # 짧은 글: 참여형 3개, 정보형 5개, 일상형 2개
     items = [
-        ("참여형", "쌍꺼풀 상담 때 제일 많이 틀리는 질문이 있어요. ‘라인 몇 mm가 예뻐요?’보다 먼저 봐야 하는 건 눈 뜨는 힘이에요. 여러분은 라인 높이랑 눈 뜨는 힘 중 뭐가 더 중요하다고 생각하세요?"),
+        ("참여형", "쌍꺼풀 상담 때 제일 많이 틀리는 질문이 있어요. ‘라인 몇 mm가 예뻐요?'보다 먼저 봐야 하는 건 눈 뜨는 힘이에요. 여러분은 라인 높이랑 눈 뜨는 힘 중 뭐가 더 중요하다고 생각하세요?"),
         ("참여형", "사진 찍을 때 눈이 달라 보이면 수술이 문제일까요? 꼭 그렇진 않아요. 렌즈, 각도, 눈썹 힘도 크게 작용해요. 셀카에서 한쪽 눈만 작아 보인 경험 있으세요?"),
-        ("참여형", "‘자연스러운 눈’이라는 말, 사실 사람마다 뜻이 달라요. 티 안 나는 눈인지, 또렷한데 과하지 않은 눈인지가 다르거든요. 여러분이 생각하는 자연스러움은 어느 쪽인가요?"),
+        ("참여형", "‘자연스러운 눈'이라는 말, 사실 사람마다 뜻이 달라요. 티 안 나는 눈인지, 또렷한데 과하지 않은 눈인지가 다르거든요. 여러분이 생각하는 자연스러움은 어느 쪽인가요?"),
         ("정보형", "쌍꺼풀 라인은 높을수록 또렷해 보이지만, 무조건 예뻐지는 건 아니에요. 눈꺼풀 두께와 눈 뜨는 힘이 안 맞으면 오히려 졸려 보일 수 있어요."),
         ("정보형", "매몰이 잘 맞는 눈은 따로 있어요. 피부가 너무 두껍지 않고, 처짐이 심하지 않고, 라인을 잡았을 때 버티는 힘이 있는 눈이에요. 그래서 방법보다 눈 상태가 먼저예요."),
-        ("정보형", "눈재수술은 ‘전보다 크게’보다 ‘왜 마음에 안 들었는지’가 먼저예요. 소세지인지, 비대칭인지, 풀림인지 원인이 달라야 계획도 달라져요."),
+        ("정보형", "눈재수술은 ‘전보다 크게'보다 ‘왜 마음에 안 들었는지'가 먼저예요. 소세지인지, 비대칭인지, 풀림인지 원인이 달라야 계획도 달라져요."),
         ("정보형", "앞트임은 많이 튼다고 시원해지는 수술이 아니에요. 몽고주름 방향, 눈 사이 거리, 흉터 가능성을 같이 봐야 해요. 과하면 되돌리기가 더 어렵습니다."),
         ("정보형", "남자 눈성형은 라인을 만드는 것보다 인상을 정리하는 쪽이 더 중요할 때가 많아요. 너무 진한 라인은 오히려 어색해 보일 수 있어요."),
         ("일상형", "마라톤을 하다 보면 초반 페이스가 제일 무섭다는 걸 느껴요. 수술도 비슷해요. 처음부터 욕심내기보다 내 눈에 맞는 속도와 방향을 잡는 게 오래 갑니다."),
@@ -3006,7 +3006,7 @@ function renderWeekCalendar() {
           <div style="background:#f0fdf4;border-radius:6px;padding:6px 8px;margin-bottom:4px;font-size:11px">
             <div style="color:#9ca3af;margin-bottom:2px">${t.time} 🔒 미리보기</div>
             <div style="font-weight:600;color:#1a1a2e">${t.label}</div>
-          </div>`).join('') : '<div style="color:#e5e7eb;font-size:11px;text-align:center;padding-top:20px">—</div>'}
+          </div>`).join('') : '<div style="color:#e5e7eb;font-size:11px;text-align:center;padding-top:20px">-</div>'}
       </div>`;
   }
 }
@@ -3061,7 +3061,7 @@ function updateStepUI(key, elId, iconId, step) {
 }
 
 function renderGuideProgress() {
-  // 홈 페이지에만 있는 요소 — null 체크
+  // 홈 페이지에만 있는 요소 - null 체크
   const el = document.getElementById('guide-progress-text');
   if (!el) return;
   const steps = document.querySelectorAll('.guide-step');
@@ -3172,7 +3172,7 @@ function renderRanking() {
     const w = Math.round((cnt/max)*100);
     return `<div class="rank-row">
       <div class="rank-num ${i<3?'top3':''}">${i+1}</div>
-      <div class="rank-name ${isOurs?'ours':''}">${r.brand}${isOurs?' ← 우리':''}</div>
+      <div class="rank-name ${isOurs?'ours':''}">${r.brand}${isOurs?' <- 우리':''}</div>
       <div class="rank-bar"><div class="rank-fill ${isOurs?'ours':''}" style="width:${w}%"></div></div>
       <div class="rank-pct">${pct}%</div>
     </div>`;
@@ -3272,7 +3272,7 @@ def api_yt_scripts_delete(filename):
 
 
 # ════════════════════════════════════════════
-# 콘텐츠 AI 페이지 — 유튜브 스크립트 + 얼굴형 분석 + 키워드 릴스
+# 콘텐츠 AI 페이지 - 유튜브 스크립트 + 얼굴형 분석 + 키워드 릴스
 # ════════════════════════════════════════════
 
 CONTENT_AI_DIR = BASE_DIR / "output" / "content_ai"
@@ -3280,11 +3280,11 @@ CONTENT_AI_DIR.mkdir(parents=True, exist_ok=True)
 
 import base64 as _base64
 
-# ── API 라우트 ────────────────────────────────────────────────────
+# -- API 라우트 ----------------------------------------------------
 
 @app.route("/api/content_ai/youtube", methods=["POST"])
 def api_content_ai_youtube():
-    """유튜브 스크립트 생성 — Claude API 직접 호출"""
+    """유튜브 스크립트 생성 - Claude API 직접 호출"""
     try:
         import anthropic as _ant
         data = request.get_json() or {}
@@ -3322,98 +3322,65 @@ def api_content_ai_youtube():
             except Exception:
                 pass
 
-        prompt = f"""당신은 팝성형외과 유튜브 영상 전문 스크립트 작가입니다.
+        prompt = f"""팝성형외과 유튜브 스크립트 작가입니다.
 
-## [역할 설정]
-19년 임상 경험을 가진 성형외과 전문의(팝성형외과 원장) 페르소나로 말하는 유튜브 의료 콘텐츠 전문 작가.
-{"3분 분량(공백 포함 약 1,000~1,200자)" if "롱폼" in vtype else "30초 분량(공백 포함 약 200~250자)"} 스크립트 작성.
+[스타일]
+- 해요체, 친근한 전문의 말투
+- 문장 끊음: 의미 단위로 / 표시
+- 인사: "안녕하세요, 팝성형외과 000 원장입니다."
+- 마무리: "지금까지 팝성형외과 000 원장이었습니다."
+- 마지막: *본 콘텐츠는 AI 기반 도구의 도움을 받아 제작되었으며, 진단/치료를 대체하지 않습니다.
 
-## [팝성형외과 스타일 가이드 — 반드시 적용]
-말투: 전문의가 환자에게 직접 설명하듯 친근하고 신뢰감 있는 해요체. 딱딱하지 않고 대화하듯 자연스럽게.
-문장 끊음: 의미 단위로 끊기. 명사/동사 앞에서 /. 2~4단어마다 한 번. 호흡 기준.
-샘플: 쌍수 재수술 / 6개월 기다리라고 하죠? / 사실은요 / 방법에 따라 달라요. // 절개법은 / 조직이 굳기까지 / 6개월이 필요하고요. / 매몰법은요? / 결정했다면 / 빠를수록 좋아요. // 팝성형외과 / 김동걸 원장이었습니다.
+[의료법]
+효과보장/전후비교/최상급/타병원비교/유인표현 금지. 부작용 언급 필수.
 
-[의료법 준수 — 절대 규칙]
-1. 치료경험담·후기 인용 전면 금지
-2. 전후 비교·효과 보장 표현 금지
-3. 타 병원 비교·비방 금지
-4. 최고/1위/완벽/100%/무조건/보장 금지
-5. 부작용·한계·주의사항 반드시 언급
-6. 시술 유인성 표현 금지
+[카테고리] {category}
+[유형] {vtype} {"(1,000~1,200자 대본)" if "롱폼" in vtype else "(200~250자 대본)"}
+[트렌딩] {', '.join(yt_keywords[:3]) if yt_keywords else '없음'}
 
-## [영상 구조]
-{'① 후킹(0:00~0:15) → ② 인사(0:15~0:25) → ③ 본론(0:25~2:30) → ④ 마무리(2:30~3:00)' if '롱폼' in vtype else '① 후킹(0:00~0:05) → ② 핵심(0:05~0:25) → ③ CTA(0:25~0:30)'}
-인사 고정: "안녕하세요, 팝성형외과 000 원장입니다."
-마무리 고정: "지금까지 팝성형외과 000 원장이었습니다."
-마지막 줄: *본 콘텐츠는 AI 기반 도구의 도움을 받아 제작되었으며, 진단·치료를 대체하지 않습니다.
-
-## [숏폼 추출 규칙 — 중요]
-롱폼 대본에서 숏폼 4개를 추출할 때:
-1. 각 숏폼은 독립적으로 이해 가능한 완결된 내용
-2. 문장은 마디마다 / 로 끊기 (자막 타이밍용)
-   예: "쌍수 고민이라면 / 이것 하나만 / 체크하세요"
-3. 각 숏폼마다 훅(첫 1-2초)이 다르게 — 겹치지 않게
-4. 30초 분량 (약 80-100자)
-5. 롱폼의 핵심 포인트 4개에서 각각 1개씩 추출
-
-## [입력 데이터]
-카테고리: {category}
-영상 유형: {vtype}
-유튜브 트렌딩: {', '.join(yt_keywords) if yt_keywords else '데이터 없음'}
-네이버 실검: {', '.join(naver_keywords) if naver_keywords else '데이터 없음'}
-
-## [출력 형식 — JSON으로만 응답]
+아래 JSON 형식으로만 응답 (다른 텍스트 없이):
 {{
-  "keywords": ["선정키워드1", "선정키워드2", "선정키워드3"],
-  "titles": {{
-    "seo": "SEO형 제목",
-    "curiosity": "궁금증 유발형 제목",
-    "empathy": "공감 감성형 제목"
-  }},
-  "thumbnails": [
-    {{"text": "썸네일 문구1", "concept": "비주얼 컨셉1"}},
-    {{"text": "썸네일 문구2", "concept": "비주얼 컨셉2"}},
-    {{"text": "썸네일 문구3", "concept": "비주얼 컨셉3"}}
-  ],
-  "longform": "전체 대본 (구조 포함)",
+  "keywords": ["키워드1", "키워드2", "키워드3"],
+  "titles": {{"seo": "SEO형제목", "curiosity": "궁금증형제목", "empathy": "공감형제목"}},
+  "thumbnails": [{{"text": "문구1", "concept": "컨셉1"}}, {{"text": "문구2", "concept": "컨셉2"}}, {{"text": "문구3", "concept": "컨셉3"}}],
+  "longform": "[0:00 후킹]\\n내용\\n\\n[0:15 인사]\\n안녕하세요, 팝성형외과 000 원장입니다.\\n\\n[0:25 본론]\\n내용\\n\\n[2:30 마무리]\\n내용\\n지금까지 팝성형외과 000 원장이었습니다.\\n\\n*본 콘텐츠는 AI 기반 도구의 도움을 받아 제작되었으며, 진단/치료를 대체하지 않습니다.",
   "shortforms": [
-    {{
-      "id": 1,
-      "hook": "첫 1-2초 훅",
-      "script": "마디마다 /로 끊어서\n예: 쌍수 고민이라면 / 이것만 알면 돼요 / 눈꺼풀 두께가 / 결과를 좌우해요",
-      "thumbnail_text": "썸네일 문구"
-    }},
-    {{
-      "id": 2,
-      "hook": "첫 1-2초 훅",
-      "script": "마디마다 /로 끊어서",
-      "thumbnail_text": "썸네일 문구"
-    }},
-    {{
-      "id": 3,
-      "hook": "첫 1-2초 훅",
-      "script": "마디마다 /로 끊어서",
-      "thumbnail_text": "썸네일 문구"
-    }},
-    {{
-      "id": 4,
-      "hook": "첫 1-2초 훅",
-      "script": "마디마다 /로 끊어서",
-      "thumbnail_text": "썸네일 문구"
-    }}
+    {{"id": 1, "hook": "훅1", "script": "마디마다 / 끊어서 / 30초 대본", "thumbnail_text": "썸네일1"}},
+    {{"id": 2, "hook": "훅2", "script": "마디마다 / 끊어서 / 30초 대본", "thumbnail_text": "썸네일2"}},
+    {{"id": 3, "hook": "훅3", "script": "마디마다 / 끊어서 / 30초 대본", "thumbnail_text": "썸네일3"}},
+    {{"id": 4, "hook": "훅4", "script": "마디마다 / 끊어서 / 30초 대본", "thumbnail_text": "썸네일4"}}
   ],
-  "description": "SEO 설명란 + 타임스탬프",
-  "hashtags": ["#태그1", "#태그2", "#태그3", "#태그4", "#태그5", "#태그6", "#태그7", "#태그8", "#태그9", "#태그10"],
-  "hooks": ["첫3초자막1", "첫3초자막2", "첫3초자막3"]
-}}"""
+  "description": "SEO설명란\\n\\n0:00 후킹\\n0:15 인사\\n0:25 본론\\n2:30 마무리",
+  "hashtags": ["#태그1","#태그2","#태그3","#태그4","#태그5","#태그6","#태그7","#태그8","#태그9","#태그10"],
+  "hooks": ["자막훅1","자막훅2","자막훅3"]
+}}
+"""
 
         client = _ant.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY",""))
         resp = client.messages.create(
-            model="claude-sonnet-4-6", max_tokens=4000,
+            model="claude-sonnet-4-6", max_tokens=8000,
             messages=[{"role":"user","content":prompt}]
         )
-        raw = resp.content[0].text.strip().replace("```json","").replace("```","").strip()
-        result = json.loads(raw)
+        raw = resp.content[0].text.strip()
+        # JSON 추출 - 코드블록 제거
+        raw = raw.replace("```json","").replace("```","").strip()
+        # JSON 시작/끝 찾기
+        if raw.find('{') >= 0:
+            raw = raw[raw.find('{'):raw.rfind('}')+1]
+        try:
+            result = json.loads(raw)
+        except Exception as je:
+            # 파싱 실패시 raw 텍스트로 기본 구조 반환
+            result = {
+                "keywords": [category],
+                "titles": {"seo": f"{category} 전문가 가이드", "curiosity": "", "empathy": ""},
+                "thumbnails": [],
+                "longform": raw[:2000],
+                "shortforms": [],
+                "description": "",
+                "hashtags": [f"#{category}", "#팝성형외과", "#강남성형외과"],
+                "hooks": []
+            }
 
         # 저장
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -3430,7 +3397,7 @@ def api_content_ai_youtube():
 
 @app.route("/api/content_ai/face", methods=["POST"])
 def api_content_ai_face():
-    """얼굴형 분석 릴스 스크립트 — Claude Vision 직접 호출"""
+    """얼굴형 분석 릴스 스크립트 - Claude Vision 직접 호출"""
     try:
         import anthropic as _ant
         data = request.get_json() or {}
@@ -3450,21 +3417,21 @@ def api_content_ai_face():
 {"인물명: " + person_name if person_name else ""}
 {"고민 부위: " + concern_area if mode=="concern" else ""}
 
-## [의료법·초상권 준수 — 절대 규칙]
-1. 시술·성형 여부 추측·단정 절대 금지
-2. 전후 비교·효과 보장 금지
-3. 부정적 외모 평가·비하 금지 — 전 구간 호의적 톤
-4. 최상급·보장 표현 금지
-5. 시술 유도·병원 홍보 금지
-6. 거짓·과장 금지
+## [의료법/초상권 준수 - 절대 규칙]
+1. 시술/성형 여부 추측/단정 절대 금지
+2. 전후 비교/효과 보장 금지
+3. 부정적 외모 평가/비하 금지 - 전 구간 호의적 톤
+4. 최상급/보장 표현 금지
+5. 시술 유도/병원 홍보 금지
+6. 거짓/과장 금지
 
 ## [구조]
-{"후킹(0:00~0:03) → 인사(0:03~0:06) → 눈·코·입·얼굴전체 분석(0:06~0:50) → 내면 칭찬 마무리(0:50~1:00)" if mode=="celebrity" else "후킹(0:00~0:03) → 인사+고민도입(0:03~0:10) → 눈·코·입·리프팅 분석(0:10~0:50) → 댓글유도(0:50~1:00)"}
+{"후킹(0:00~0:03) -> 인사(0:03~0:06) -> 눈/코/입/얼굴전체 분석(0:06~0:50) -> 내면 칭찬 마무리(0:50~1:00)" if mode=="celebrity" else "후킹(0:00~0:03) -> 인사+고민도입(0:03~0:10) -> 눈/코/입/리프팅 분석(0:10~0:50) -> 댓글유도(0:50~1:00)"}
 인사 고정: "안녕하세요, 팝성형외과 000 원장입니다."
-{"마무리: 인물의 내면 태도·마인드 칭찬" if mode=="celebrity" else "마무리: 혹시 고민이 있으신 분들은 댓글 남겨주세요."}
-마지막 줄: *본 콘텐츠는 AI 기반 도구의 도움을 받아 제작된 미적 분석 콘텐츠이며, 특정인의 시술 여부와 무관하고 진단·치료를 대체하지 않습니다.
+{"마무리: 인물의 내면 태도/마인드 칭찬" if mode=="celebrity" else "마무리: 혹시 고민이 있으신 분들은 댓글 남겨주세요."}
+마지막 줄: *본 콘텐츠는 AI 기반 도구의 도움을 받아 제작된 미적 분석 콘텐츠이며, 특정인의 시술 여부와 무관하고 진단/치료를 대체하지 않습니다.
 
-## [출력 — JSON으로만]
+## [출력 - JSON으로만]
 {{
   "mode": "{mode}",
   "face_type": "얼굴형",
@@ -3477,7 +3444,8 @@ def api_content_ai_face():
   "caption": "캡션 2-3줄",
   "hashtags": ["#얼굴분석","#황금비율","#이목구비","#안면비율","#성형외과","#팝성형외과","#강남성형외과","#릴스","#뷰티","#얼굴황금비율"],
   "hooks": ["자막1","자막2","자막3"]
-}}"""
+}}
+"""
 
         client = _ant.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY",""))
         resp = client.messages.create(
@@ -3487,8 +3455,14 @@ def api_content_ai_face():
                 {"type":"text","text":prompt}
             ]}]
         )
-        raw = resp.content[0].text.strip().replace("```json","").replace("```","").strip()
-        result = json.loads(raw)
+        raw = resp.content[0].text.strip()
+        raw = raw.replace("```json","").replace("```","").strip()
+        if raw.find('{') >= 0:
+            raw = raw[raw.find('{'):raw.rfind('}')+1]
+        try:
+            result = json.loads(raw)
+        except Exception:
+            result = {"mode": mode, "face_type": "분석 완료", "face_features": raw[:200], "strength": "", "hook": "", "titles": {"a":"","b":"","c":""}, "thumbnails": [], "reels_script": {"0-3초": raw[:100]}, "caption": "", "hashtags": [], "hooks": []}
 
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         out = CONTENT_AI_DIR / f"{ts}_face_{mode}.json"
@@ -3503,7 +3477,7 @@ def api_content_ai_face():
 
 @app.route("/api/content_ai/keyword_reels", methods=["POST"])
 def api_content_ai_keyword_reels():
-    """키워드 → 릴스 주제 추천 — Claude API 직접 호출"""
+    """키워드 -> 릴스 주제 추천 - Claude API 직접 호출"""
     try:
         import anthropic as _ant
         data = request.get_json() or {}
@@ -3559,7 +3533,7 @@ def api_content_ai_keyword_reels():
 
 JSON으로만 응답:
 {{
-  "keyword": "{keyword}",
+  "keyword": "입력키워드",
   "recommendations": [
     {{
       "id": 1,
@@ -3571,15 +3545,22 @@ JSON으로만 응답:
       "expected_performance": "예상 성과"
     }}
   ]
-}}"""
+}}
+"""
 
         client = _ant.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY",""))
         resp = client.messages.create(
             model="claude-sonnet-4-6", max_tokens=3000,
             messages=[{"role":"user","content":prompt}]
         )
-        raw = resp.content[0].text.strip().replace("```json","").replace("```","").strip()
-        result = json.loads(raw)
+        raw = resp.content[0].text.strip()
+        raw = raw.replace("```json","").replace("```","").strip()
+        if raw.find('{') >= 0:
+            raw = raw[raw.find('{'):raw.rfind('}')+1]
+        try:
+            result = json.loads(raw)
+        except Exception:
+            result = {"keyword": keyword, "recommendations": [{"id":1,"title":raw[:100],"hook":"","points":[],"script_30sec":raw[:300],"hashtags":[],"expected_performance":""}]}
 
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         out = CONTENT_AI_DIR / f"{ts}_keyword_{keyword[:20]}.json"
@@ -3595,7 +3576,7 @@ JSON으로만 응답:
 
 @app.route("/api/content_ai/list")
 def api_content_ai_list():
-    """생성된 콘텐츠 AI 결과 목록"""
+    # 생성된 콘텐츠 AI 결과 목록
     try:
         files = sorted(CONTENT_AI_DIR.glob("*.json"), key=lambda f: f.stat().st_mtime, reverse=True)
         items = []
@@ -3617,7 +3598,7 @@ def api_content_ai_list():
         return jsonify({"error":str(e)})
 
 
-# ── 콘텐츠 AI 페이지 HTML ──────────────────────────────────────────
+# -- 콘텐츠 AI 페이지 HTML ------------------------------------------
 CONTENT_AI_HTML = """<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -3703,7 +3684,7 @@ select,input[type=text]{width:100%;padding:9px 12px;border:1px solid #e5e7eb;bor
 </div>
 <div class="header">
   <h1>POP 콘텐츠 AI</h1>
-  <p>유튜브 스크립트 · 얼굴형 분석 릴스 · 키워드 릴스 주제 추천</p>
+  <p>유튜브 스크립트 / 얼굴형 분석 릴스 / 키워드 릴스 주제 추천</p>
 </div>
 <div class="wrap">
   <div class="tabs">
@@ -4117,7 +4098,7 @@ async function generateShorts() {
             <div class="rec-title">${s.title||''}</div>
             <div class="rec-hook">${s.hook||''}</div>
             <div class="script-toggle" onclick="toggleScript(this)">▶ 30초 대본 보기</div>
-            <div class="rec-script">${(s.script_30sec||'').replace(/\//g,' <span style="color:#C9956C;font-weight:700">/</span> ')}</div>
+            <div class="rec-script">${(s.script_30sec||'').replace(/[/]/g,' <span style="color:#C9956C;font-weight:700">/</span> ')}</div>
             <div class="hashtags" style="margin-top:8px">
               ${(s.hashtags||[]).map(h=>`<span class="htag" onclick="copyText('${h}')">${h}</span>`).join('')}
             </div>
@@ -4186,7 +4167,7 @@ def content_ai_page():
 
 
 # ════════════════════════════════════════════
-# 자동화 파이프라인 API — 점유율 진단 → GEO 콘텐츠 작성 → 콘텐츠 발행
+# 자동화 파이프라인 API - 점유율 진단 -> GEO 콘텐츠 작성 -> 콘텐츠 발행
 # ════════════════════════════════════════════
 
 @app.route("/api/auto/run", methods=["POST"])
@@ -4305,19 +4286,19 @@ def api_shorts_batch():
 
         prompt = f"""당신은 팝성형외과 인스타그램 숏츠 전문 기획자입니다.
 
-[의료법 준수 — 절대 규칙]
-1. 효과 보장·최상급 표현 금지
-2. 전후 비교·치료경험담 금지
+[의료법 준수 - 절대 규칙]
+1. 효과 보장/최상급 표현 금지
+2. 전후 비교/치료경험담 금지
 3. 부정적 외모 평가 금지
-4. 타 병원 비교·비방 금지
+4. 타 병원 비교/비방 금지
 5. 유인성 표현 금지
 
-[이미 생성된 주제 — 중복 금지]
+[이미 생성된 주제 - 중복 금지]
 {used_str}
 
 [요청]
 팝성형외과 인스타그램 숏츠 주제 {count}개를 생성하세요.
-- 눈성형·코성형·리프팅 자유 비율
+- 눈성형/코성형/리프팅 자유 비율
 - 각 주제마다 완전히 다른 각도 (오해와진실/심리/비교/주의사항/나이노화/타이밍 등)
 - 위 중복 주제와 겹치지 않게
 - 30초 대본 포함
@@ -4335,15 +4316,24 @@ JSON으로만 응답:
       "hashtags": ["#태그1", "#태그2", "#태그3"]
     }}
   ]
-}}"""
+}}
+"""
 
         client = _ant.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY",""))
         resp = client.messages.create(
             model="claude-sonnet-4-6", max_tokens=6000,
             messages=[{"role":"user","content":prompt}]
         )
-        raw = resp.content[0].text.strip().replace("```json","").replace("```","").strip()
-        result = json.loads(raw)
+        raw = resp.content[0].text.strip()
+        raw = raw.replace("```json","").replace("```","").strip()
+        if raw.find('{') >= 0:
+            raw = raw[raw.find('{'):raw.rfind('}')+1]
+        elif raw.find('[') >= 0:
+            raw = '{"shorts":' + raw[raw.find('['):raw.rfind(']')+1] + '}'
+        try:
+            result = json.loads(raw)
+        except Exception:
+            result = {"shorts": [{"id":1,"category":"눈성형","angle":"","title":"파싱 오류","hook":"","script_30sec":raw[:200],"hashtags":[]}]}
 
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         out = CONTENT_AI_DIR / f"{ts}_shorts_batch.json"
