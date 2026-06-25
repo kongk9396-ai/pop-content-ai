@@ -4126,7 +4126,7 @@ function makeStageBar(uid) {
 }
 
 function setStage(uid, idx) {
-  localStorage.setItem('stage_' + uid, JSON.stringify({idx}));
+  localStorage.setItem('stage_' + uid, JSON.stringify({idx: idx}));
   const bar = document.getElementById('sb-' + uid);
   if (!bar) return;
   bar.querySelectorAll('.stage-btn').forEach((btn, i) => {
