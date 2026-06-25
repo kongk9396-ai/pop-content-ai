@@ -885,11 +885,11 @@ async function generateMag() {
 
 @app.route('/')
 def home():
-    return render_template_string(HOME_HTML)
+    return HOME_HTML
 
 @app.route('/blog')
 def index():
-    return render_template_string(HTML)
+    return HTML
 
 
 # -- 홈에서 블로그/매거진 생성 버튼 API ----------------------------
@@ -1283,7 +1283,7 @@ def load_yt_scripts():
 
 @app.route("/youtube")
 def youtube_page():
-    return render_template_string(YT_HTML)
+    return YT_HTML
 
 
 @app.route("/api/yt/scripts")
@@ -2157,7 +2157,7 @@ def api_mag_generate():
 
 @app.route("/magazine")
 def magazine_page():
-    return render_template_string(MAG_HTML)
+    return MAG_HTML
 
 
 # ============================================================
@@ -2275,7 +2275,7 @@ loadDecks();
 
 @app.route("/cardnews")
 def cardnews_page():
-    return render_template_string(CN_HTML)
+    return CN_HTML
 
 
 @app.route("/api/cn/decks")
@@ -2571,7 +2571,7 @@ def _thread_dates():
 
 @app.route('/threads')
 def threads_page():
-    return render_template_string(THREAD_HTML)
+    return THREAD_HTML
 
 @app.route('/api/threads/data')
 def api_threads_data():
@@ -3282,7 +3282,7 @@ loadAll();
 
 @app.route('/sov')
 def sov_page():
-    return render_template_string(SOV_PAGE_HTML)
+    return SOV_PAGE_HTML
 
 
 # ════════════════════════════════════════════
@@ -4446,7 +4446,7 @@ function esc(s) {
 
 @app.route('/content_ai')
 def content_ai_page():
-    return render_template_string(CONTENT_AI_HTML)
+    return CONTENT_AI_HTML
 
 
 # ════════════════════════════════════════════
