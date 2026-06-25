@@ -3328,7 +3328,12 @@ def api_content_ai_youtube():
 19년 임상 경험을 가진 성형외과 전문의(팝성형외과 원장) 페르소나로 말하는 유튜브 의료 콘텐츠 전문 작가.
 {"3분 분량(공백 포함 약 1,000~1,200자)" if "롱폼" in vtype else "30초 분량(공백 포함 약 200~250자)"} 스크립트 작성.
 
-## [의료법 준수 — 절대 규칙]
+## [팝성형외과 스타일 가이드 — 반드시 적용]
+말투: 전문의가 환자에게 직접 설명하듯 친근하고 신뢰감 있는 해요체. 딱딱하지 않고 대화하듯 자연스럽게.
+문장 끊음: 의미 단위로 끊기. 명사/동사 앞에서 /. 2~4단어마다 한 번. 호흡 기준.
+샘플: 쌍수 재수술 / 6개월 기다리라고 하죠? / 사실은요 / 방법에 따라 달라요. // 절개법은 / 조직이 굳기까지 / 6개월이 필요하고요. / 매몰법은요? / 결정했다면 / 빠를수록 좋아요. // 팝성형외과 / 김동걸 원장이었습니다.
+
+[의료법 준수 — 절대 규칙]
 1. 치료경험담·후기 인용 전면 금지
 2. 전후 비교·효과 보장 표현 금지
 3. 타 병원 비교·비방 금지
@@ -3341,6 +3346,15 @@ def api_content_ai_youtube():
 인사 고정: "안녕하세요, 팝성형외과 000 원장입니다."
 마무리 고정: "지금까지 팝성형외과 000 원장이었습니다."
 마지막 줄: *본 콘텐츠는 AI 기반 도구의 도움을 받아 제작되었으며, 진단·치료를 대체하지 않습니다.
+
+## [숏폼 추출 규칙 — 중요]
+롱폼 대본에서 숏폼 4개를 추출할 때:
+1. 각 숏폼은 독립적으로 이해 가능한 완결된 내용
+2. 문장은 마디마다 / 로 끊기 (자막 타이밍용)
+   예: "쌍수 고민이라면 / 이것 하나만 / 체크하세요"
+3. 각 숏폼마다 훅(첫 1-2초)이 다르게 — 겹치지 않게
+4. 30초 분량 (약 80-100자)
+5. 롱폼의 핵심 포인트 4개에서 각각 1개씩 추출
 
 ## [입력 데이터]
 카테고리: {category}
@@ -3362,7 +3376,32 @@ def api_content_ai_youtube():
     {{"text": "썸네일 문구3", "concept": "비주얼 컨셉3"}}
   ],
   "longform": "전체 대본 (구조 포함)",
-  "shortforms": ["숏폼1 대본", "숏폼2 대본", "숏폼3 대본"],
+  "shortforms": [
+    {{
+      "id": 1,
+      "hook": "첫 1-2초 훅",
+      "script": "마디마다 /로 끊어서\n예: 쌍수 고민이라면 / 이것만 알면 돼요 / 눈꺼풀 두께가 / 결과를 좌우해요",
+      "thumbnail_text": "썸네일 문구"
+    }},
+    {{
+      "id": 2,
+      "hook": "첫 1-2초 훅",
+      "script": "마디마다 /로 끊어서",
+      "thumbnail_text": "썸네일 문구"
+    }},
+    {{
+      "id": 3,
+      "hook": "첫 1-2초 훅",
+      "script": "마디마다 /로 끊어서",
+      "thumbnail_text": "썸네일 문구"
+    }},
+    {{
+      "id": 4,
+      "hook": "첫 1-2초 훅",
+      "script": "마디마다 /로 끊어서",
+      "thumbnail_text": "썸네일 문구"
+    }}
+  ],
   "description": "SEO 설명란 + 타임스탬프",
   "hashtags": ["#태그1", "#태그2", "#태그3", "#태그4", "#태그5", "#태그6", "#태그7", "#태그8", "#태그9", "#태그10"],
   "hooks": ["첫3초자막1", "첫3초자막2", "첫3초자막3"]
@@ -3669,8 +3708,10 @@ select,input[type=text]{width:100%;padding:9px 12px;border:1px solid #e5e7eb;bor
 <div class="wrap">
   <div class="tabs">
     <button class="tab on" onclick="switchTab('youtube',this)">🎬 유튜브 스크립트</button>
+    <button class="tab" onclick="switchTab('shorts',this)">⚡ 숏츠 10개 생성</button>
     <button class="tab" onclick="switchTab('face',this)">👤 얼굴형 분석</button>
     <button class="tab" onclick="switchTab('keyword',this)">🔑 키워드 릴스</button>
+    <button class="tab" onclick="switchTab('history',this);loadHistory()">📋 히스토리</button>
   </div>
 
   <!-- 유튜브 스크립트 -->
@@ -3755,6 +3796,44 @@ select,input[type=text]{width:100%;padding:9px 12px;border:1px solid #e5e7eb;bor
           <div style="font-size:32px">👤</div>
           <div>이미지 업로드 후 "분석 시작" 클릭</div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 숏츠 10개 배치 생성 -->
+  <div class="panel" id="panel-shorts">
+    <div class="grid">
+      <div class="card">
+        <h3>설정</h3>
+        <div class="form-group">
+          <label>생성 개수</label>
+          <select id="shorts-count">
+            <option value="10">10개</option>
+            <option value="5">5개</option>
+            <option value="20">20개</option>
+          </select>
+        </div>
+        <div style="background:#fff8f5;border-radius:10px;padding:12px;margin-bottom:14px;font-size:12px;color:#6b7280;line-height:1.7">
+          <div style="font-weight:700;color:#C9956C;margin-bottom:4px">✨ 스마트 중복 방지</div>
+          기존에 생성된 주제를 자동으로 파악해서 겹치지 않는 새로운 주제로 생성해요.
+        </div>
+        <button class="btn btn-main" id="shorts-btn" onclick="generateShorts()">⚡ 숏츠 생성</button>
+      </div>
+      <div class="card result-area" id="shorts-result">
+        <div class="result-empty">
+          <div style="font-size:32px">⚡</div>
+          <div>버튼 클릭 시 중복 없이 숏츠 생성</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 히스토리 -->
+  <div class="panel" id="panel-history">
+    <div class="card">
+      <h3>📋 생성 히스토리</h3>
+      <div id="history-list" style="margin-top:16px">
+        <div class="loading">히스토리 로딩 중...</div>
       </div>
     </div>
   </div>
@@ -4008,6 +4087,89 @@ async function generateKeyword() {
   }
 }
 
+async function generateShorts() {
+  const btn = document.getElementById('shorts-btn');
+  const result = document.getElementById('shorts-result');
+  const count = document.getElementById('shorts-count').value;
+  btn.disabled=true; btn.textContent='⏳ 생성 중... (1-2분 소요)';
+  btn.style.background='#6b7280';
+  result.innerHTML='<div class="loading"><div class="spinner"></div>숏츠 '+count+'개 생성 중...</div>';
+
+  try {
+    const r = await fetch('/api/content_ai/shorts_batch',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({count:parseInt(count)})
+    });
+    const d = await r.json();
+    if (!d.success) throw new Error(d.error);
+    const shorts = d.data.shorts || [];
+
+    result.innerHTML = `
+      <div style="margin-bottom:12px;font-size:13px;color:#6b7280">총 ${shorts.length}개 생성 완료</div>
+      <div class="rec-cards">
+        ${shorts.map(s=>`
+          <div class="rec-card">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <span class="rec-num">${s.id}</span>
+              <span class="pcat ${s.category?.includes('눈')?'eye':s.category?.includes('코')?'nose':'lifting'}">${s.category||''}</span>
+              <span style="font-size:11px;color:#9ca3af">${s.angle||''}</span>
+            </div>
+            <div class="rec-title">${s.title||''}</div>
+            <div class="rec-hook">${s.hook||''}</div>
+            <div class="script-toggle" onclick="toggleScript(this)">▶ 30초 대본 보기</div>
+            <div class="rec-script">${(s.script_30sec||'').replace(/\//g,' <span style="color:#C9956C;font-weight:700">/</span> ')}</div>
+            <div class="hashtags" style="margin-top:8px">
+              ${(s.hashtags||[]).map(h=>`<span class="htag" onclick="copyText('${h}')">${h}</span>`).join('')}
+            </div>
+            <button class="copy-btn" style="margin-top:10px" onclick="copyText(this.closest('.rec-card').querySelector('.rec-script').textContent)">대본 복사</button>
+          </div>`).join('')}
+      </div>`;
+
+    btn.style.background='#16a34a';
+    btn.textContent='✅ 생성 완료!';
+    setTimeout(()=>{btn.style.background='linear-gradient(135deg,#C9956C,#E8927C)';btn.textContent='⚡ 숏츠 생성';},3000);
+  } catch(e) {
+    result.innerHTML=`<div class="result-empty" style="color:#ef4444">오류: ${e.message}</div>`;
+    btn.style.background='linear-gradient(135deg,#C9956C,#E8927C)';
+    btn.textContent='⚡ 숏츠 생성';
+  } finally {
+    btn.disabled=false;
+  }
+}
+
+async function loadHistory() {
+  const el = document.getElementById('history-list');
+  try {
+    const r = await fetch('/api/content_ai/history');
+    const items = await r.json();
+    if (!items.length) {
+      el.innerHTML='<div class="result-empty">아직 생성된 콘텐츠가 없어요</div>';
+      return;
+    }
+    const typeLabel = {youtube:'🎬 유튜브',shorts_batch:'⚡ 숏츠',face:'👤 얼굴분석',keyword_reels:'🔑 키워드 릴스'};
+    el.innerHTML = `
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="border-bottom:2px solid #f3f4f6">
+            <th style="padding:10px;text-align:left;color:#6b7280;font-weight:600">유형</th>
+            <th style="padding:10px;text-align:left;color:#6b7280;font-weight:600">내용</th>
+            <th style="padding:10px;text-align:left;color:#6b7280;font-weight:600">생성일시</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${items.map(i=>`
+            <tr style="border-bottom:1px solid #f9fafb">
+              <td style="padding:10px">${typeLabel[i.type]||i.type}</td>
+              <td style="padding:10px;color:#1A1A1A">${i.preview||i.keyword||i.category||'-'}</td>
+              <td style="padding:10px;color:#9ca3af">${i.created_at||''}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+  } catch(e) {
+    el.innerHTML='<div class="result-empty" style="color:#ef4444">로드 실패</div>';
+  }
+}
+
 function toggleScript(el) {
   const sc = el.nextElementSibling;
   if (sc.style.display==='block') { sc.style.display='none'; el.textContent='▶ 30초 대본 보기'; }
@@ -4119,6 +4281,118 @@ def api_auto_status():
         "step2_content": {"status": "pending"},
         "step3_publish": {"status": "pending"},
     }})
+
+
+@app.route("/api/content_ai/shorts_batch", methods=["POST"])
+def api_shorts_batch():
+    """숏츠 10개 한 번에 생성 - 주제 중복 없이"""
+    try:
+        import anthropic as _ant
+        data = request.get_json() or {}
+        count = data.get("count", 10)
+
+        # 기존 생성된 주제 로드 (중복 방지)
+        used_topics = []
+        for f in CONTENT_AI_DIR.glob("*_shorts_*.json"):
+            try:
+                d = json.loads(f.read_text(encoding="utf-8"))
+                for item in d.get("result", {}).get("shorts", []):
+                    used_topics.append(item.get("title", ""))
+            except Exception:
+                pass
+
+        used_str = "\n".join(used_topics[:30]) if used_topics else "없음"
+
+        prompt = f"""당신은 팝성형외과 인스타그램 숏츠 전문 기획자입니다.
+
+[의료법 준수 — 절대 규칙]
+1. 효과 보장·최상급 표현 금지
+2. 전후 비교·치료경험담 금지
+3. 부정적 외모 평가 금지
+4. 타 병원 비교·비방 금지
+5. 유인성 표현 금지
+
+[이미 생성된 주제 — 중복 금지]
+{used_str}
+
+[요청]
+팝성형외과 인스타그램 숏츠 주제 {count}개를 생성하세요.
+- 눈성형·코성형·리프팅 자유 비율
+- 각 주제마다 완전히 다른 각도 (오해와진실/심리/비교/주의사항/나이노화/타이밍 등)
+- 위 중복 주제와 겹치지 않게
+- 30초 대본 포함
+
+JSON으로만 응답:
+{{
+  "shorts": [
+    {{
+      "id": 1,
+      "category": "눈성형/코성형/리프팅",
+      "angle": "각도",
+      "title": "숏츠 제목",
+      "hook": "첫 1-2초 훅 (12자 이내)",
+      "script_30sec": "30초 대본 (문장 끊음 포함\n마디마다 / 표시)",
+      "hashtags": ["#태그1", "#태그2", "#태그3"]
+    }}
+  ]
+}}"""
+
+        client = _ant.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY",""))
+        resp = client.messages.create(
+            model="claude-sonnet-4-6", max_tokens=6000,
+            messages=[{"role":"user","content":prompt}]
+        )
+        raw = resp.content[0].text.strip().replace("```json","").replace("```","").strip()
+        result = json.loads(raw)
+
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        out = CONTENT_AI_DIR / f"{ts}_shorts_batch.json"
+        out.write_text(json.dumps({
+            "type":"shorts_batch","count":count,
+            "created_at":datetime.now().isoformat(),"result":result
+        }, ensure_ascii=False, indent=2), encoding="utf-8")
+
+        return jsonify({"success":True,"data":result})
+    except Exception as e:
+        return jsonify({"success":False,"error":str(e)})
+
+
+@app.route("/api/content_ai/history")
+def api_content_ai_history():
+    """생성된 콘텐츠 전체 히스토리"""
+    try:
+        files = sorted(CONTENT_AI_DIR.glob("*.json"),
+                      key=lambda f: f.stat().st_mtime, reverse=True)
+        items = []
+        for f in files[:100]:
+            try:
+                d = json.loads(f.read_text(encoding="utf-8"))
+                result = d.get("result", {})
+                preview = ""
+                if d.get("type") == "youtube":
+                    preview = (result.get("titles",{}).get("seo","") or
+                              result.get("longform","")[:50])
+                elif d.get("type") == "shorts_batch":
+                    shorts = result.get("shorts",[])
+                    preview = f"{len(shorts)}개 생성"
+                elif d.get("type") == "face":
+                    preview = result.get("face_type","")
+                elif d.get("type") == "keyword_reels":
+                    preview = f"{len(result.get('recommendations',[]))}개 추천"
+
+                items.append({
+                    "filename": f.name,
+                    "type": d.get("type",""),
+                    "category": d.get("category",""),
+                    "keyword": d.get("keyword",""),
+                    "created_at": d.get("created_at","")[:16],
+                    "preview": preview,
+                })
+            except Exception:
+                continue
+        return jsonify(items)
+    except Exception as e:
+        return jsonify({"error":str(e)})
 
 
 if __name__ == '__main__':
