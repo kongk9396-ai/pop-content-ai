@@ -3282,19 +3282,77 @@ import base64 as _base64
 
 # -- API 라우트 ----------------------------------------------------
 
+
+# 29가지 콘텐츠 각도 목록
+CONTENT_ANGLES = [
+    {"angle": "오해와 진실", "desc": "많은 사람들이 잘못 알고 있는 상식을 바로잡는 영상"},
+    {"angle": "비교와 선택", "desc": "두 가지 이상의 옵션을 비교해 선택 기준을 제시"},
+    {"angle": "주의사항", "desc": "수술/시술 전후 꼭 알아야 할 주의점"},
+    {"angle": "회복과 관리", "desc": "수술 후 회복 과정과 올바른 관리 방법"},
+    {"angle": "타이밍과 시기", "desc": "언제 하면 좋은지, 나이/계절/상황별 적절한 시기"},
+    {"angle": "심리와 감정", "desc": "수술 전후 환자가 느끼는 불안, 기대, 변화 심리"},
+    {"angle": "후회와 재수술", "desc": "잘못된 선택으로 인한 후회와 재수술 사례"},
+    {"angle": "나이와 노화", "desc": "나이에 따른 차이, 노화와 성형의 관계"},
+    {"angle": "원장 시각", "desc": "의사 입장에서 솔직하게 말하는 비하인드"},
+    {"angle": "케이스 분석", "desc": "특정 케이스를 심층 분석하는 사례 중심"},
+    {"angle": "숫자와 데이터", "desc": "통계, 수치, 데이터로 설명하는 팩트 기반"},
+    {"angle": "원인과 메커니즘", "desc": "왜 그렇게 되는지 원리와 메커니즘 설명"},
+    {"angle": "Q&A 답변", "desc": "환자들이 자주 묻는 질문에 답변하는 형식"},
+    {"angle": "전후 변화", "desc": "수술 전후 변화 과정을 단계별로 설명"},
+    {"angle": "부작용과 위험", "desc": "부작용, 위험성, 실패 케이스 솔직 공개"},
+    {"angle": "비용과 가격", "desc": "가격 범위, 비용 대비 효과 분석"},
+    {"angle": "트렌드 분석", "desc": "최근 성형 트렌드, 유행하는 스타일 분석"},
+    {"angle": "유명인 분석", "desc": "연예인/인플루언서 얼굴 변화 분석"},
+    {"angle": "하면 안 되는 경우", "desc": "이런 사람은 수술하면 안 된다는 역발상"},
+    {"angle": "자연스러움의 기준", "desc": "자연스러운 성형이란 무엇인지 기준 제시"},
+    {"angle": "병원 선택 기준", "desc": "좋은 병원/의사 선택하는 방법"},
+    {"angle": "회의와 고민", "desc": "수술을 고민하는 사람들에게 진심 어린 조언"},
+    {"angle": "오래된 방식 vs 새 방식", "desc": "구식 vs 최신 기술/방법 비교"},
+    {"angle": "외국과 한국 비교", "desc": "해외와 한국 성형 문화/기술 차이"},
+    {"angle": "셀프 케어", "desc": "수술 없이 할 수 있는 자가 관리 방법"},
+    {"angle": "시즌별 가이드", "desc": "봄여름가을겨울 계절별 성형/관리 가이드"},
+    {"angle": "직업별 고려사항", "desc": "직업, 라이프스타일에 따른 성형 선택"},
+    {"angle": "가족/주변 반응", "desc": "수술 후 가족, 친구, 직장 동료 반응 대처"},
+    {"angle": "처음 하는 사람 가이드", "desc": "성형 처음 고려하는 사람을 위한 입문 가이드"},
+]
+
+def get_next_angle(category):
+    """이미 생성된 각도를 제외하고 다음 각도 반환"""
+    used_angles = []
+    if CONTENT_AI_DIR.exists():
+        for f in CONTENT_AI_DIR.glob(f"*_youtube_{category}*.json"):
+            try:
+                d = json.loads(f.read_text(encoding="utf-8"))
+                angle = d.get("angle", "")
+                if angle:
+                    used_angles.append(angle)
+            except Exception:
+                pass
+
+    # 사용 안 한 각도 중 랜덤 선택
+    import random
+    available = [a for a in CONTENT_ANGLES if a["angle"] not in used_angles]
+    if not available:
+        available = CONTENT_ANGLES  # 다 썼으면 처음부터
+
+    return random.choice(available)
+
+
 @app.route("/api/content_ai/youtube", methods=["POST"])
 def api_content_ai_youtube():
-    """유튜브 스크립트 생성 - Claude API 직접 호출"""
+    # 유튜브 스크립트 생성 - 3단계 분리 방식
     try:
         import anthropic as _ant
         data = request.get_json() or {}
         category = data.get("category", "눈성형")
         vtype = data.get("type", "롱폼")
 
-        # 유튜브 트렌딩 키워드 수집
-        yt_keywords = []
-        naver_keywords = []
+        # 각도 자동 선택 (중복 방지)
+        angle_data = get_next_angle(category)
+        angle = angle_data["angle"]
+        angle_desc = angle_data["desc"]
 
+        yt_keywords = []
         yt_key = os.environ.get("YOUTUBE_API_KEY", "")
         if yt_key:
             try:
@@ -3302,97 +3360,175 @@ def api_content_ai_youtube():
                 params = _up.urlencode({"part":"snippet","chart":"mostPopular","regionCode":"KR","maxResults":"10","key":yt_key})
                 req = _ur.urlopen(f"https://www.googleapis.com/youtube/v3/videos?{params}", timeout=5)
                 items = json.loads(req.read().decode())["items"]
-                yt_keywords = [i["snippet"]["title"] for i in items[:5]]
+                yt_keywords = [i["snippet"]["title"] for i in items[:3]]
             except Exception:
                 pass
-
-        naver_id = os.environ.get("NAVER_CLIENT_ID", "")
-        naver_secret = os.environ.get("NAVER_CLIENT_SECRET", "")
-        if naver_id and naver_secret:
-            try:
-                import urllib.request as _ur, urllib.parse as _up
-                q = _up.quote(f"{category} 성형")
-                req = _ur.Request(f"https://openapi.naver.com/v1/search/blog?query={q}&display=5&sort=date")
-                req.add_header("X-Naver-Client-Id", naver_id)
-                req.add_header("X-Naver-Client-Secret", naver_secret)
-                res = _ur.urlopen(req, timeout=5)
-                items = json.loads(res.read().decode())["items"]
-                import re as _re
-                naver_keywords = [_re.sub("<[^>]*>","",i["title"]) for i in items[:5]]
-            except Exception:
-                pass
-
-        prompt = f"""팝성형외과 유튜브 스크립트 작가입니다.
-
-[스타일]
-- 해요체, 친근한 전문의 말투
-- 문장 끊음: 의미 단위로 / 표시
-- 인사: "안녕하세요, 팝성형외과 000 원장입니다."
-- 마무리: "지금까지 팝성형외과 000 원장이었습니다."
-- 마지막: *본 콘텐츠는 AI 기반 도구의 도움을 받아 제작되었으며, 진단/치료를 대체하지 않습니다.
-
-[의료법]
-효과보장/전후비교/최상급/타병원비교/유인표현 금지. 부작용 언급 필수.
-
-[카테고리] {category}
-[유형] {vtype} {"(1,000~1,200자 대본)" if "롱폼" in vtype else "(200~250자 대본)"}
-[트렌딩] {', '.join(yt_keywords[:3]) if yt_keywords else '없음'}
-
-아래 JSON 형식으로만 응답 (다른 텍스트 없이):
-{{
-  "keywords": ["키워드1", "키워드2", "키워드3"],
-  "titles": {{"seo": "SEO형제목", "curiosity": "궁금증형제목", "empathy": "공감형제목"}},
-  "thumbnails": [{{"text": "문구1", "concept": "컨셉1"}}, {{"text": "문구2", "concept": "컨셉2"}}, {{"text": "문구3", "concept": "컨셉3"}}],
-  "longform": "[0:00 후킹]\\n내용\\n\\n[0:15 인사]\\n안녕하세요, 팝성형외과 000 원장입니다.\\n\\n[0:25 본론]\\n내용\\n\\n[2:30 마무리]\\n내용\\n지금까지 팝성형외과 000 원장이었습니다.\\n\\n*본 콘텐츠는 AI 기반 도구의 도움을 받아 제작되었으며, 진단/치료를 대체하지 않습니다.",
-  "shortforms": [
-    {{"id": 1, "hook": "훅1", "script": "마디마다 / 끊어서 / 30초 대본", "thumbnail_text": "썸네일1"}},
-    {{"id": 2, "hook": "훅2", "script": "마디마다 / 끊어서 / 30초 대본", "thumbnail_text": "썸네일2"}},
-    {{"id": 3, "hook": "훅3", "script": "마디마다 / 끊어서 / 30초 대본", "thumbnail_text": "썸네일3"}},
-    {{"id": 4, "hook": "훅4", "script": "마디마다 / 끊어서 / 30초 대본", "thumbnail_text": "썸네일4"}}
-  ],
-  "description": "SEO설명란\\n\\n0:00 후킹\\n0:15 인사\\n0:25 본론\\n2:30 마무리",
-  "hashtags": ["#태그1","#태그2","#태그3","#태그4","#태그5","#태그6","#태그7","#태그8","#태그9","#태그10"],
-  "hooks": ["자막훅1","자막훅2","자막훅3"]
-}}
-"""
 
         client = _ant.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY",""))
-        resp = client.messages.create(
-            model="claude-sonnet-4-6", max_tokens=8000,
-            messages=[{"role":"user","content":prompt}]
-        )
-        raw = resp.content[0].text.strip()
-        # JSON 추출 - 코드블록 제거
-        raw = raw.replace("```json","").replace("```","").strip()
-        # JSON 시작/끝 찾기
-        if raw.find('{') >= 0:
-            raw = raw[raw.find('{'):raw.rfind('}')+1]
-        try:
-            result = json.loads(raw)
-        except Exception as je:
-            # 파싱 실패시 raw 텍스트로 기본 구조 반환
-            result = {
-                "keywords": [category],
-                "titles": {"seo": f"{category} 전문가 가이드", "curiosity": "", "empathy": ""},
-                "thumbnails": [],
-                "longform": raw[:2000],
-                "shortforms": [],
-                "description": "",
-                "hashtags": [f"#{category}", "#팝성형외과", "#강남성형외과"],
-                "hooks": []
-            }
 
-        # 저장
+        # STEP 1: 롱폼 대본 생성 (텍스트)
+        longform_prompt = f"""팝성형외과 유튜브 {vtype} 스크립트를 작성해줘.
+카테고리: {category}
+이번 각도: {angle} ({angle_desc})
+트렌딩: {", ".join(yt_keywords) if yt_keywords else "없음"}
+
+[이번 영상 각도 - 반드시 이 각도로만 작성]
+각도 "{angle}"의 관점에서 {category} 주제를 다루는 영상.
+예: "오해와 진실" 각도면 "{category}에 대한 잘못된 상식", "하면 안 되는 경우" 각도면 "{category} 피해야 할 케이스"
+
+[인기 유튜브 벤치마킹 적용]
+후킹: 첫 문장에 핵심 결론 바로. 역설/반전 사용. 인사 7초 이내.
+구조: 케이스 1->2->3 번호. 원장 자기 얼굴 직접 가리키며 설명. 마지막 요약.
+톤: "솔직히 말하면" "사실은" "대부분 동의할 거예요" 활용. 단점도 솔직히.
+리듬: 짧은문장 + 짧은문장 + 긴설명. 질문 - 바로 답.
+
+[의료법] 효과보장/전후비교/최상급/타병원비교 금지. 부작용 언급 필수.
+
+[기본 규칙]
+- 해요체, 친근한 전문의 말투
+- 문장마다 / 로 끊음
+- 인사: 안녕하세요, 팝성형외과 000 원장입니다.
+- 마무리: 지금까지 팝성형외과 000 원장이었습니다.
+- 마지막: *본 콘텐츠는 AI 기반 도구의 도움을 받아 제작되었으며, 진단치료를 대체하지 않습니다.
+- {"3분 분량 약 1000~1200자" if "롱폼" in vtype else "30초 분량 약 200자"}
+
+형식:
+[0:00 후킹]
+[0:15 인사]
+[0:25 본론]
+[2:30 마무리]
+
+스크립트만 출력."""
+
+
+        resp1 = client.messages.create(
+            model="claude-sonnet-4-6", max_tokens=3000,
+            messages=[{"role":"user","content":longform_prompt}]
+        )
+        longform_text = resp1.content[0].text.strip()
+
+        # STEP 2: 메타데이터 생성 (간단한 JSON)
+        meta_prompt = f"""스크립트 메타데이터를 JSON으로만 출력해줘.
+번역은 현지인이 실제로 쓰는 자연스러운 표현으로. 직역 금지.
+
+카테고리: {category}
+각도: {angle}
+스크립트 앞부분: {longform_text[:300]}
+
+JSON (다른 텍스트 없이):
+{{
+  "keywords": ["키워드1", "키워드2", "키워드3"],
+  "title_seo": "SEO형 제목 (한국어)",
+  "title_curiosity": "궁금증형 제목 (한국어)",
+  "title_empathy": "공감형 제목 (한국어)",
+  "thumbnail1": "썸네일 문구1",
+  "thumbnail2": "썸네일 문구2",
+  "thumbnail3": "썸네일 문구3",
+  "hook1": "첫3초자막1 (12자이내)",
+  "hook2": "첫3초자막2 (12자이내)",
+  "hook3": "첫3초자막3 (12자이내)",
+  "hashtags": "#태그1 #태그2 #태그3 #태그4 #태그5 #태그6 #태그7 #태그8 #태그9 #태그10",
+  "description": "SEO 설명 2줄",
+  "en": {{
+    "title": "영어 제목 (자연스러운 영어, YouTube 현지 사용자 기준)",
+    "thumbnail": "영어 썸네일 문구 (임팩트 있게)",
+    "hashtags": "#EnglishTag1 #EnglishTag2 #EnglishTag3 #EnglishTag4 #EnglishTag5"
+  }},
+  "zh": {{
+    "title": "중국어 제목 (간체자, 중국 현지 SNS 감성)",
+    "thumbnail": "중국어 썸네일 문구",
+    "hashtags": "#中文标签1 #中文标签2 #中文标签3 #中文标签4 #中文标签5"
+  }},
+  "ja": {{
+    "title": "일본어 제목 (자연스러운 일본어, 일본 유튜브 감성)",
+    "thumbnail": "일본어 썸네일 문구",
+    "hashtags": "#日本語タグ1 #日本語タグ2 #日本語タグ3 #日本語タグ4 #日本語タグ5"
+  }}
+}}"""
+
+        resp2 = client.messages.create(
+            model="claude-haiku-4-5-20251001", max_tokens=800,
+            messages=[{"role":"user","content":meta_prompt}]
+        )
+        meta_raw = resp2.content[0].text.strip().replace("```json","").replace("```","").strip()
+        if "{" in meta_raw:
+            meta_raw = meta_raw[meta_raw.find("{"):meta_raw.rfind("}")+1]
+        try:
+            meta = json.loads(meta_raw)
+        except Exception:
+            meta = {}
+
+        # STEP 3: 숏폼 4개 추출 (롱폼 전체 기반)
+        shorts_prompt = f"""아래 롱폼 스크립트에서 30초 숏폼 4개를 뽑아줘.
+
+[롱폼 전체]
+{longform_text}
+
+[규칙]
+- 각 숏폼은 롱폼의 다른 포인트에서 추출 (겹치지 않게)
+- 문장을 / 로 끊기 (자막 타이밍)
+- 30초 분량 (80~100자)
+- 각 숏폼마다 다른 훅 (첫 1~2초 임팩트)
+- 의료법: 효과보장/전후비교 금지
+
+JSON 배열로만 출력 (다른 텍스트 없이):
+[
+  {{"id": 1, "hook": "첫1-2초 임팩트 훅", "script": "내용 / 내용 / 내용 (80~100자)", "thumbnail_text": "썸네일 문구"}},
+  {{"id": 2, "hook": "첫1-2초 임팩트 훅", "script": "내용 / 내용 / 내용 (80~100자)", "thumbnail_text": "썸네일 문구"}},
+  {{"id": 3, "hook": "첫1-2초 임팩트 훅", "script": "내용 / 내용 / 내용 (80~100자)", "thumbnail_text": "썸네일 문구"}},
+  {{"id": 4, "hook": "첫1-2초 임팩트 훅", "script": "내용 / 내용 / 내용 (80~100자)", "thumbnail_text": "썸네일 문구"}}
+]"""
+
+        resp3 = client.messages.create(
+            model="claude-sonnet-4-6", max_tokens=1500,
+            messages=[{"role":"user","content":shorts_prompt}]
+        )
+        shorts_raw = resp3.content[0].text.strip().replace("```json","").replace("```","").strip()
+        if "[" in shorts_raw:
+            shorts_raw = shorts_raw[shorts_raw.find("["):shorts_raw.rfind("]")+1]
+        try:
+            shortforms = json.loads(shorts_raw)
+        except Exception:
+            shortforms = []
+
+        result = {
+            "keywords": meta.get("keywords", [category]),
+            "titles": {
+                "seo": meta.get("title_seo", ""),
+                "curiosity": meta.get("title_curiosity", ""),
+                "empathy": meta.get("title_empathy", "")
+            },
+            "thumbnails": [
+                {"text": meta.get("thumbnail1",""), "concept": ""},
+                {"text": meta.get("thumbnail2",""), "concept": ""},
+                {"text": meta.get("thumbnail3",""), "concept": ""},
+            ],
+            "longform": longform_text,
+            "shortforms": shortforms,
+            "description": meta.get("description",""),
+            "hashtags": meta.get("hashtags","").split(),
+            "hooks": [meta.get("hook1",""), meta.get("hook2",""), meta.get("hook3","")],
+            "multilang": {
+                "en": meta.get("en", {}),
+                "zh": meta.get("zh", {}),
+                "ja": meta.get("ja", {})
+            }
+        }
+
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         out = CONTENT_AI_DIR / f"{ts}_youtube_{category}.json"
         out.write_text(json.dumps({
             "type":"youtube","category":category,"vtype":vtype,
+            "angle":angle,"angle_desc":angle_desc,
             "created_at":datetime.now().isoformat(),"result":result
         }, ensure_ascii=False, indent=2), encoding="utf-8")
 
+        result["angle"] = angle
+        result["angle_desc"] = angle_desc
         return jsonify({"success":True, "data":result})
     except Exception as e:
         return jsonify({"success":False, "error":str(e)})
+
 
 
 @app.route("/api/content_ai/face", methods=["POST"])
@@ -3669,6 +3805,11 @@ select,input[type=text]{width:100%;padding:9px 12px;border:1px solid #e5e7eb;bor
 .script-toggle:hover{color:#C9956C}
 .rec-script{display:none;background:#f9fafb;border-radius:8px;padding:12px;font-size:12px;line-height:1.8;white-space:pre-wrap}
 .loading{display:flex;align-items:center;justify-content:center;gap:10px;padding:60px;color:#9ca3af;font-size:14px}
+/* 단계 체크 */
+.stage-bar{display:flex;gap:4px;margin-top:12px;flex-wrap:wrap}
+.stage-btn{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#6b7280;cursor:pointer;transition:all .2s}
+.stage-btn.done{background:#1a1a2e;color:#fff;border-color:#1a1a2e}
+.stage-btn.current{background:#C9956C;color:#fff;border-color:#C9956C}
 .spinner{width:24px;height:24px;border:3px solid #f3f4f6;border-top-color:#C9956C;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 </style>
@@ -3723,10 +3864,16 @@ select,input[type=text]{width:100%;padding:9px 12px;border:1px solid #e5e7eb;bor
         </div>
         <button class="btn btn-main" id="yt-btn" onclick="generateYoutube()">🎬 스크립트 생성</button>
       </div>
-      <div class="card result-area" id="yt-result">
-        <div class="result-empty">
-          <div style="font-size:32px">🎬</div>
-          <div>좌측 설정 후 "스크립트 생성" 클릭</div>
+      <div class="card" style="overflow-y:auto;max-height:85vh">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div style="font-size:14px;font-weight:700;color:#1A1A1A">생성된 스크립트 <span id="yt-count" style="color:#C9956C"></span></div>
+          <button onclick="document.getElementById('yt-list').innerHTML='';document.getElementById('yt-count').textContent=''" style="padding:4px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:11px;cursor:pointer;background:#fff">전체 삭제</button>
+        </div>
+        <div id="yt-list">
+          <div class="result-empty" style="padding:40px">
+            <div style="font-size:32px">🎬</div>
+            <div>좌측 설정 후 "스크립트 생성" 클릭</div>
+          </div>
         </div>
       </div>
     </div>
@@ -3772,10 +3919,16 @@ select,input[type=text]{width:100%;padding:9px 12px;border:1px solid #e5e7eb;bor
         </div>
         <button class="btn btn-main" id="face-btn" onclick="generateFace()">👤 분석 시작</button>
       </div>
-      <div class="card result-area" id="face-result">
-        <div class="result-empty">
-          <div style="font-size:32px">👤</div>
-          <div>이미지 업로드 후 "분석 시작" 클릭</div>
+      <div class="card" style="overflow-y:auto;max-height:85vh">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div style="font-size:14px;font-weight:700;color:#1A1A1A">분석 결과 <span id="face-count" style="color:#C9956C"></span></div>
+          <button onclick="document.getElementById('face-list').innerHTML='';document.getElementById('face-count').textContent=''" style="padding:4px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:11px;cursor:pointer;background:#fff">전체 삭제</button>
+        </div>
+        <div id="face-list">
+          <div class="result-empty" style="padding:40px">
+            <div style="font-size:32px">👤</div>
+            <div>이미지 업로드 후 "분석 시작" 클릭</div>
+          </div>
         </div>
       </div>
     </div>
@@ -3800,10 +3953,16 @@ select,input[type=text]{width:100%;padding:9px 12px;border:1px solid #e5e7eb;bor
         </div>
         <button class="btn btn-main" id="shorts-btn" onclick="generateShorts()">⚡ 숏츠 생성</button>
       </div>
-      <div class="card result-area" id="shorts-result">
-        <div class="result-empty">
-          <div style="font-size:32px">⚡</div>
-          <div>버튼 클릭 시 중복 없이 숏츠 생성</div>
+      <div class="card" style="overflow-y:auto;max-height:85vh">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div style="font-size:14px;font-weight:700;color:#1A1A1A">생성된 숏츠 <span id="shorts-count" style="color:#C9956C"></span></div>
+          <button onclick="document.getElementById('shorts-list').innerHTML='';document.getElementById('shorts-count').textContent=''" style="padding:4px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:11px;cursor:pointer;background:#fff">전체 삭제</button>
+        </div>
+        <div id="shorts-list">
+          <div class="result-empty" style="padding:40px">
+            <div style="font-size:32px">⚡</div>
+            <div>버튼 클릭 시 중복 없이 숏츠 생성</div>
+          </div>
         </div>
       </div>
     </div>
@@ -3839,10 +3998,16 @@ select,input[type=text]{width:100%;padding:9px 12px;border:1px solid #e5e7eb;bor
         </div>
         <button class="btn btn-main" id="kw-btn" onclick="generateKeyword()">🔑 주제 추천받기</button>
       </div>
-      <div class="card result-area" id="kw-result">
-        <div class="result-empty">
-          <div style="font-size:32px">🔑</div>
-          <div>키워드 입력 후 "주제 추천받기" 클릭</div>
+      <div class="card" style="overflow-y:auto;max-height:85vh">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div style="font-size:14px;font-weight:700;color:#1A1A1A">추천 결과 <span id="kw-count" style="color:#C9956C"></span></div>
+          <button onclick="document.getElementById('kw-list').innerHTML='';document.getElementById('kw-count').textContent=''" style="padding:4px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:11px;cursor:pointer;background:#fff">전체 삭제</button>
+        </div>
+        <div id="kw-list">
+          <div class="result-empty" style="padding:40px">
+            <div style="font-size:32px">🔑</div>
+            <div>키워드 입력 후 "주제 추천받기" 클릭</div>
+          </div>
         </div>
       </div>
     </div>
@@ -3893,12 +4058,23 @@ function copyText(text) {
 
 async function generateYoutube() {
   const btn = document.getElementById('yt-btn');
-  const result = document.getElementById('yt-result');
+  const list = document.getElementById('yt-list');
   btn.disabled = true; btn.textContent = '⏳ 생성 중...';
-  result.innerHTML = '<div class="loading"><div class="spinner"></div>스크립트 생성 중... (30초~1분 소요)</div>';
+
+  // 로딩 카드 맨 위에 추가
+  const loadingId = 'loading-' + Date.now();
+  const loadingCard = document.createElement('div');
+  loadingCard.id = loadingId;
+  loadingCard.className = 'loading';
+  loadingCard.style.cssText = 'border:1px solid #f3f4f6;border-radius:12px;padding:20px;margin-bottom:12px';
+  loadingCard.innerHTML = '<div class="spinner"></div>스크립트 생성 중... (30초~1분 소요)';
+  list.insertBefore(loadingCard, list.firstChild);
+  // 빈 상태 메시지 제거
+  list.querySelectorAll('.result-empty').forEach(e=>e.remove());
 
   const category = document.getElementById('yt-category').value;
   const type = document.querySelector('input[name="yt-type"]:checked').value;
+  const now = new Date().toLocaleTimeString('ko-KR', {hour:'2-digit',minute:'2-digit'});
 
   try {
     const r = await fetch('/api/content_ai/youtube', {
@@ -3908,52 +4084,161 @@ async function generateYoutube() {
     const d = await r.json();
     if (!d.success) throw new Error(d.error);
     const data = d.data;
+    const uid = Date.now();
 
-    result.innerHTML = `
-      <div class="keyword-badges">
-        ${(data.keywords||[]).map(k=>`<span class="badge">${k}</span>`).join('')}
-      </div>
-      <div style="margin-bottom:16px">
-        <label style="font-size:12px;font-weight:600;color:#6b7280;display:block;margin-bottom:8px">제목 추천</label>
-        <div class="title-tabs">
-          <button class="ttab on" onclick="showTitle('seo',this)">SEO형</button>
-          <button class="ttab" onclick="showTitle('curiosity',this)">궁금증형</button>
-          <button class="ttab" onclick="showTitle('empathy',this)">공감형</button>
+    // 새 결과 카드 생성
+    const card = document.createElement('div');
+    card.style.cssText = 'border:1px solid #f3f4f6;border-radius:12px;padding:20px;margin-bottom:16px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.04)';
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+        <div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
+            <span class="badge" style="font-size:12px">${category}</span>
+            <span class="badge" style="background:#f0f4ff;color:#4f46e5;font-size:12px">${type}</span>
+            ${data.angle ? `<span class="badge" style="background:#fff0f9;color:#c026d3;font-size:12px">📐 ${data.angle}</span>` : ''}
+            <span style="font-size:11px;color:#9ca3af">${now}</span>
+          </div>
+          <div class="keyword-badges">
+            ${(data.keywords||[]).map(k=>`<span class="badge">${k}</span>`).join('')}
+          </div>
         </div>
-        <div id="title-seo" class="script-box" style="max-height:60px">${data.titles?.seo||''}</div>
-        <div id="title-curiosity" class="script-box" style="max-height:60px;display:none">${data.titles?.curiosity||''}</div>
-        <div id="title-empathy" class="script-box" style="max-height:60px;display:none">${data.titles?.empathy||''}</div>
+        <button onclick="this.closest('div[style]').remove();updateCount('yt')" style="font-size:13px;color:#9ca3af;border:none;background:none;cursor:pointer;flex-shrink:0">✕</button>
       </div>
-      <div style="margin-bottom:16px">
+
+      <div style="margin-bottom:14px;padding:12px;background:#fafafa;border-radius:8px">
+        <div style="font-size:11px;font-weight:700;color:#C9956C;margin-bottom:8px;letter-spacing:.05em">제목 추천</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div>
+            <span style="font-size:10px;background:#e8f0fe;color:#4f8ef7;padding:2px 6px;border-radius:4px;margin-right:6px">SEO</span>
+            <span style="font-size:13px;font-weight:600;color:#1A1A1A">${data.titles?.seo||''}</span>
+            <button class="copy-btn" style="margin-left:8px;padding:2px 8px;font-size:10px" onclick="copyText('${(data.titles?.seo||'').replace(/'/g,"\\\\'")}')">복사</button>
+          </div>
+          <div>
+            <span style="font-size:10px;background:#fff0e8;color:#f7934f;padding:2px 6px;border-radius:4px;margin-right:6px">궁금증</span>
+            <span style="font-size:12px;color:#374151">${data.titles?.curiosity||''}</span>
+          </div>
+          <div>
+            <span style="font-size:10px;background:#e8faf3;color:#4fd19e;padding:2px 6px;border-radius:4px;margin-right:6px">공감</span>
+            <span style="font-size:12px;color:#374151">${data.titles?.empathy||''}</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <label style="font-size:12px;font-weight:600;color:#6b7280">대본</label>
-          <button class="copy-btn" onclick="copyText(document.getElementById('longform-text').textContent)">복사</button>
+          <div style="font-size:11px;font-weight:700;color:#C9956C;letter-spacing:.05em">롱폼 대본</div>
+          <button class="copy-btn" onclick="copyText(document.getElementById('lf-${uid}').innerText)">전체 복사</button>
         </div>
-        <div class="script-box" id="longform-text">${(data.longform||'')}</div>
+        <div id="lf-${uid}" style="background:#f9fafb;border-radius:8px;padding:14px;font-size:13px;line-height:2;white-space:pre-wrap;max-height:300px;overflow-y:auto;color:#1A1A1A">${(data.longform||'').replace(/\\n/g,'\\n')}</div>
       </div>
-      <div style="margin-bottom:16px">
-        <label style="font-size:12px;font-weight:600;color:#6b7280;display:block;margin-bottom:8px">숏폼 추출</label>
-        <div class="shortform-cards">
+
+      <div style="margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;color:#C9956C;margin-bottom:8px;letter-spacing:.05em">숏폼 ${(data.shortforms||[]).length}개 추출</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           ${(data.shortforms||[]).map((s,i)=>`
-            <div class="sf-card">
-              <div class="sf-title">숏폼 ${i+1}</div>
-              <div>${s}</div>
-              <button class="copy-btn" style="margin-top:8px" onclick="navigator.clipboard.writeText(this.closest('.sf-card').querySelectorAll('div')[1].textContent)">복사</button>
+            <div style="background:#f9fafb;border-radius:8px;padding:12px">
+              <div style="font-size:11px;font-weight:700;color:#C9956C;margin-bottom:4px">숏폼 ${i+1}</div>
+              ${s.hook ? `<div style="font-size:12px;font-weight:600;color:#1A1A1A;margin-bottom:6px">${s.hook}</div>` : ''}
+              <div id="sf-${uid}-${i}" style="font-size:12px;line-height:1.9;color:#374151;white-space:pre-wrap">${(s.script||s||'').split('/').join('\n/ ')}</div>
+              <button class="copy-btn" style="margin-top:8px;font-size:10px" onclick="copyText(document.getElementById('sf-${uid}-${i}').innerText)">복사</button>
             </div>`).join('')}
         </div>
       </div>
-      <div style="margin-bottom:16px">
-        <label style="font-size:12px;font-weight:600;color:#6b7280;display:block;margin-bottom:8px">해시태그</label>
+
+      <div style="margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;color:#C9956C;margin-bottom:6px;letter-spacing:.05em">해시태그</div>
         <div class="hashtags">
-          ${(data.hashtags||[]).map(h=>`<span class="htag" onclick="copyText('${h}')">${h}</span>`).join('')}
+          ${(data.hashtags||[]).map(h=>`<span class="htag" style="font-size:11px" onclick="copyText('${h}')">${h}</span>`).join('')}
         </div>
       </div>
+
+      ${(data.multilang && (data.multilang.en || data.multilang.zh || data.multilang.ja)) ? `
+      <div style="margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;color:#C9956C;margin-bottom:10px;letter-spacing:.05em">🌐 다국어 버전</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+
+          ${data.multilang.en ? `
+          <div style="background:#f0f4ff;border-radius:8px;padding:12px">
+            <div style="font-size:11px;font-weight:700;color:#4f46e5;margin-bottom:6px">🇺🇸 English</div>
+            <div style="font-size:13px;font-weight:600;color:#1A1A1A;margin-bottom:4px">${data.multilang.en.title||''}</div>
+            <div style="font-size:12px;color:#6b7280;margin-bottom:6px">${data.multilang.en.thumbnail||''}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px">
+              ${(data.multilang.en.hashtags||'').split(' ').filter(h=>h).map(h=>`<span class="htag" style="font-size:10px;background:#e0e7ff;color:#4f46e5" onclick="copyText('${h}')">${h}</span>`).join('')}
+            </div>
+          </div>` : ''}
+
+          ${data.multilang.zh ? `
+          <div style="background:#fff7f0;border-radius:8px;padding:12px">
+            <div style="font-size:11px;font-weight:700;color:#ea580c;margin-bottom:6px">🇨🇳 中文</div>
+            <div style="font-size:13px;font-weight:600;color:#1A1A1A;margin-bottom:4px">${data.multilang.zh.title||''}</div>
+            <div style="font-size:12px;color:#6b7280;margin-bottom:6px">${data.multilang.zh.thumbnail||''}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px">
+              ${(data.multilang.zh.hashtags||'').split(' ').filter(h=>h).map(h=>`<span class="htag" style="font-size:10px;background:#ffedd5;color:#ea580c" onclick="copyText('${h}')">${h}</span>`).join('')}
+            </div>
+          </div>` : ''}
+
+          ${data.multilang.ja ? `
+          <div style="background:#f0fdf4;border-radius:8px;padding:12px">
+            <div style="font-size:11px;font-weight:700;color:#16a34a;margin-bottom:6px">🇯🇵 日本語</div>
+            <div style="font-size:13px;font-weight:600;color:#1A1A1A;margin-bottom:4px">${data.multilang.ja.title||''}</div>
+            <div style="font-size:12px;color:#6b7280;margin-bottom:6px">${data.multilang.ja.thumbnail||''}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px">
+              ${(data.multilang.ja.hashtags||'').split(' ').filter(h=>h).map(h=>`<span class="htag" style="font-size:10px;background:#dcfce7;color:#16a34a" onclick="copyText('${h}')">${h}</span>`).join('')}
+            </div>
+          </div>` : ''}
+
+        </div>
+      </div>` : ''}
+
+      ${makeStageBar(uid)}
     `;
+
+    // 로딩 카드 교체
+    list.replaceChild(card, document.getElementById(loadingId));
+    updateCount('yt');
+
   } catch(e) {
-    result.innerHTML = `<div class="result-empty" style="color:#ef4444">오류: ${e.message}</div>`;
+    const errCard = document.createElement('div');
+    errCard.style.cssText = 'border:1px solid #fee2e2;border-radius:12px;padding:16px;margin-bottom:12px;color:#ef4444;font-size:13px';
+    errCard.innerHTML = `오류: ${e.message} <button onclick="this.parentElement.remove()" style="margin-left:8px;border:none;background:none;cursor:pointer;color:#9ca3af">✕</button>`;
+    list.replaceChild(errCard, document.getElementById(loadingId));
   } finally {
     btn.disabled=false; btn.textContent='🎬 스크립트 생성';
   }
+}
+
+// 단계 목록
+const STAGES = ['생성완료', '촬영완료', '편집완료', '업로드예정', '업로드완료'];
+
+function makeStageBar(id) {
+  const saved = JSON.parse(localStorage.getItem('stage_'+id) || '{}');
+  const currentIdx = saved.stage !== undefined ? saved.stage : 0;
+  return `<div class="stage-bar" id="stagebar-${id}">
+    ${STAGES.map((s,i) => `<button
+      class="stage-btn ${i < currentIdx ? 'done' : i === currentIdx ? 'current' : ''}"
+      onclick="setStage('${id}', ${i})"
+    >${i < currentIdx ? '✓ ' : ''}${s}</button>`).join('')}
+  </div>`;
+}
+
+function setStage(id, idx) {
+  localStorage.setItem('stage_'+id, JSON.stringify({stage: idx, updated: new Date().toISOString()}));
+  const bar = document.getElementById('stagebar-'+id);
+  if (!bar) return;
+  bar.querySelectorAll('.stage-btn').forEach((btn, i) => {
+    btn.className = 'stage-btn ' + (i < idx ? 'done' : i === idx ? 'current' : '');
+    btn.textContent = (i < idx ? '✓ ' : '') + STAGES[i];
+  });
+}
+
+function updateCount(type) {
+  const map = {yt:'yt-list', face:'face-list', kw:'kw-list', shorts:'shorts-list'};
+  const countMap = {yt:'yt-count', face:'face-count', kw:'kw-count', shorts:'shorts-count'};
+  const list = document.getElementById(map[type]);
+  const countEl = document.getElementById(countMap[type]);
+  if (!list || !countEl) return;
+  const cnt = list.querySelectorAll('div[style*="border"]').length;
+  countEl.textContent = cnt > 0 ? `(${cnt}개)` : '';
 }
 
 function showTitle(type, btn) {
@@ -3967,9 +4252,20 @@ function showTitle(type, btn) {
 async function generateFace() {
   if (!faceImageB64) { alert('이미지를 먼저 업로드해주세요!'); return; }
   const btn = document.getElementById('face-btn');
-  const result = document.getElementById('face-result');
+  const list = document.getElementById('face-list');
   btn.disabled=true; btn.textContent='⏳ 분석 중...';
-  result.innerHTML = '<div class="loading"><div class="spinner"></div>얼굴 분석 중... (30초~1분 소요)</div>';
+
+  const loadingId = 'loading-' + Date.now();
+  const loadingCard = document.createElement('div');
+  loadingCard.id = loadingId;
+  loadingCard.className = 'loading';
+  loadingCard.style.cssText = 'border:1px solid #f3f4f6;border-radius:12px;padding:20px;margin-bottom:12px';
+  loadingCard.innerHTML = '<div class="spinner"></div>얼굴 분석 중... (30초~1분 소요)';
+  list.insertBefore(loadingCard, list.firstChild);
+  list.querySelectorAll('.result-empty').forEach(e=>e.remove());
+
+  const now = new Date().toLocaleTimeString('ko-KR', {hour:'2-digit',minute:'2-digit'});
+  const uid = Date.now();
 
   try {
     const r = await fetch('/api/content_ai/face', {
@@ -3987,39 +4283,65 @@ async function generateFace() {
     const data = d.data;
     const rs = data.reels_script || {};
 
-    result.innerHTML = `
-      <div class="face-result">
-        <div class="face-card">
-          <h4>얼굴형</h4>
-          <div style="font-size:18px;font-weight:700;color:#1A1A1A">${data.face_type||''}</div>
-          <div style="font-size:13px;color:#6b7280;margin-top:4px">${data.face_features||''}</div>
+    const card = document.createElement('div');
+    card.style.cssText = 'border:1px solid #f3f4f6;border-radius:12px;padding:20px;margin-bottom:16px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.04)';
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <span class="badge" style="font-size:12px">${data.face_type||'분석완료'}</span>
+          <span style="font-size:11px;color:#9ca3af">${faceMode==='celebrity'?'연예인':'고민형'} · ${now}</span>
         </div>
-        <div class="face-card">
-          <h4>장점</h4>
-          <div style="font-size:13px;color:#374151">${data.strength||''}</div>
+        <button onclick="this.closest('div[style]').remove();updateCount('face')" style="font-size:13px;color:#9ca3af;border:none;background:none;cursor:pointer">✕</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+        <div style="background:#fafafa;border-radius:8px;padding:12px">
+          <div style="font-size:11px;font-weight:700;color:#C9956C;margin-bottom:6px">얼굴형 분석</div>
+          <div style="font-size:14px;font-weight:700;color:#1A1A1A;margin-bottom:4px">${data.face_type||''}</div>
+          <div style="font-size:12px;color:#6b7280;line-height:1.6">${data.face_features||''}</div>
+        </div>
+        <div style="background:#fafafa;border-radius:8px;padding:12px">
+          <div style="font-size:11px;font-weight:700;color:#C9956C;margin-bottom:6px">장점</div>
+          <div style="font-size:12px;color:#374151;line-height:1.6">${data.strength||''}</div>
         </div>
       </div>
-      <div style="margin-bottom:16px">
-        <label style="font-size:12px;font-weight:600;color:#6b7280;display:block;margin-bottom:8px">30초 릴스 대본</label>
-        <div class="timeline">
+
+      <div style="margin-bottom:14px;background:#fafafa;border-radius:8px;padding:14px">
+        <div style="font-size:11px;font-weight:700;color:#C9956C;margin-bottom:10px;letter-spacing:.05em">30초 릴스 대본</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
           ${Object.entries(rs).map(([t,c])=>`
-            <div class="tl-item">
-              <div class="tl-time">${t}</div>
-              <div class="tl-text">${c}</div>
+            <div style="display:flex;gap:12px;align-items:flex-start">
+              <div style="color:#C9956C;font-weight:700;font-size:12px;min-width:55px;padding-top:2px">${t}</div>
+              <div style="font-size:13px;color:#374151;line-height:1.8;flex:1">${c}</div>
             </div>`).join('')}
         </div>
       </div>
-      <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
-        <label style="font-size:12px;font-weight:600;color:#6b7280">인스타 캡션</label>
-        <button class="copy-btn" onclick="copyText(document.getElementById('caption-text').textContent)">복사</button>
+
+      <div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-size:11px;font-weight:700;color:#C9956C;letter-spacing:.05em">인스타 캡션</div>
+          <button class="copy-btn" onclick="copyText(document.getElementById('cap-${uid}').innerText)">복사</button>
+        </div>
+        <div id="cap-${uid}" style="background:#f9fafb;border-radius:8px;padding:12px;font-size:12px;line-height:1.9;white-space:pre-wrap;color:#374151">${data.caption||''}</div>
       </div>
-      <div class="script-box" id="caption-text" style="margin-bottom:16px">${data.caption||''}</div>
-      <div class="hashtags">
-        ${(data.hashtags||[]).map(h=>`<span class="htag" onclick="copyText('${h}')">${h}</span>`).join('')}
+
+      <div style="margin-bottom:12px">
+        <div class="hashtags">
+          ${(data.hashtags||[]).map(h=>`<span class="htag" style="font-size:11px" onclick="copyText('${h}')">${h}</span>`).join('')}
+        </div>
       </div>
+
+      ${makeStageBar(uid)}
     `;
+
+    list.replaceChild(card, document.getElementById(loadingId));
+    updateCount('face');
+
   } catch(e) {
-    result.innerHTML = `<div class="result-empty" style="color:#ef4444">오류: ${e.message}</div>`;
+    const errCard = document.createElement('div');
+    errCard.style.cssText = 'border:1px solid #fee2e2;border-radius:12px;padding:16px;margin-bottom:12px;color:#ef4444;font-size:13px';
+    errCard.innerHTML = `오류: ${e.message} <button onclick="this.parentElement.remove()" style="margin-left:8px;border:none;background:none;cursor:pointer;color:#9ca3af">✕</button>`;
+    list.replaceChild(errCard, document.getElementById(loadingId));
   } finally {
     btn.disabled=false; btn.textContent='👤 분석 시작';
   }
@@ -4029,9 +4351,19 @@ async function generateKeyword() {
   const kw = document.getElementById('kw-input').value.trim();
   if (!kw) { alert('키워드를 입력해주세요!'); return; }
   const btn = document.getElementById('kw-btn');
-  const result = document.getElementById('kw-result');
+  const list = document.getElementById('kw-list');
   btn.disabled=true; btn.textContent='⏳ 추천 중...';
-  result.innerHTML = '<div class="loading"><div class="spinner"></div>릴스 주제 추천 중... (30초~1분 소요)</div>';
+
+  const loadingId = 'loading-' + Date.now();
+  const loadingCard = document.createElement('div');
+  loadingCard.id = loadingId;
+  loadingCard.className = 'loading';
+  loadingCard.style.cssText = 'border:1px solid #f3f4f6;border-radius:12px;padding:20px;margin-bottom:12px';
+  loadingCard.innerHTML = '<div class="spinner"></div>릴스 주제 추천 중... (30초~1분 소요)';
+  list.insertBefore(loadingCard, list.firstChild);
+  list.querySelectorAll('.result-empty').forEach(e=>e.remove());
+
+  const now = new Date().toLocaleTimeString('ko-KR', {hour:'2-digit',minute:'2-digit'});
 
   try {
     const r = await fetch('/api/content_ai/keyword_reels', {
@@ -4042,27 +4374,46 @@ async function generateKeyword() {
     if (!d.success) throw new Error(d.error);
     const recs = d.data.recommendations || [];
 
-    result.innerHTML = `
-      <div style="margin-bottom:12px;font-size:13px;color:#6b7280">
-        <span class="badge">${kw}</span> 키워드 기반 릴스 주제 ${recs.length}개
+    const card = document.createElement('div');
+    card.style.cssText = 'border:1px solid #f3f4f6;border-radius:12px;padding:20px;margin-bottom:16px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.04)';
+    const kwUid = Date.now();
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+        <div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:4px">
+            <span class="badge" style="font-size:12px">${kw}</span>
+            <span style="font-size:11px;color:#9ca3af">${recs.length}개 추천 · ${now}</span>
+          </div>
+        </div>
+        <button onclick="this.closest('div[style]').remove();updateCount('kw')" style="font-size:13px;color:#9ca3af;border:none;background:none;cursor:pointer">✕</button>
       </div>
-      <div class="rec-cards">
-        ${recs.map(r=>`
-          <div class="rec-card">
-            <div class="rec-title"><span class="rec-num">${r.id}</span>${r.title}</div>
-            <div class="rec-hook">${r.hook}</div>
-            <div class="rec-points">${(r.points||[]).map(p=>`• ${p}`).join('<br>')}</div>
-            <div class="script-toggle" onclick="toggleScript(this)">▶ 30초 대본 보기</div>
-            <div class="rec-script">${r.script_30sec||''}</div>
-            <div class="hashtags" style="margin-top:8px">
-              ${(r.hashtags||[]).map(h=>`<span class="htag" onclick="copyText('${h}')">${h}</span>`).join('')}
+      <div style="display:flex;flex-direction:column;gap:12px">
+        ${recs.map((r,i)=>`
+          <div style="background:#fafafa;border-radius:8px;padding:14px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <span style="background:#C9956C;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${i+1}</span>
+              <span style="font-size:14px;font-weight:700;color:#1A1A1A">${r.title||''}</span>
             </div>
-            <button class="copy-btn" style="margin-top:10px" onclick="copyText(document.querySelectorAll('.rec-script')[${r.id-1}].textContent)">대본 복사</button>
+            <div style="font-size:13px;color:#C9956C;font-weight:600;margin-bottom:8px;padding:6px 10px;background:#fff8f5;border-radius:6px">${r.hook||''}</div>
+            <div style="font-size:12px;color:#374151;margin-bottom:8px;line-height:1.8">${(r.points||[]).map(p=>`• ${p}`).join('<br>')}</div>
+            <div style="font-size:12px;cursor:pointer;color:#9ca3af;margin-bottom:6px" onclick="const sc=this.nextElementSibling;sc.style.display=sc.style.display==='none'?'block':'none';this.textContent=sc.style.display==='none'?'▶ 30초 대본 보기':'▼ 대본 접기'">▶ 30초 대본 보기</div>
+            <div style="display:none;font-size:12px;background:#fff;border-radius:6px;padding:12px;line-height:2;white-space:pre-wrap;color:#1A1A1A">${r.script_30sec||''}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">
+              ${(r.hashtags||[]).map(h=>`<span class="htag" style="font-size:11px" onclick="copyText('${h}')">${h}</span>`).join('')}
+            </div>
           </div>`).join('')}
       </div>
+      ${makeStageBar(kwUid)}
     `;
+
+    list.replaceChild(card, document.getElementById(loadingId));
+    updateCount('kw');
+
   } catch(e) {
-    result.innerHTML = `<div class="result-empty" style="color:#ef4444">오류: ${e.message}</div>`;
+    const errCard = document.createElement('div');
+    errCard.style.cssText = 'border:1px solid #fee2e2;border-radius:12px;padding:16px;margin-bottom:12px;color:#ef4444;font-size:13px';
+    errCard.innerHTML = `오류: ${e.message} <button onclick="this.parentElement.remove()" style="margin-left:8px;border:none;background:none;cursor:pointer;color:#9ca3af">✕</button>`;
+    list.replaceChild(errCard, document.getElementById(loadingId));
   } finally {
     btn.disabled=false; btn.textContent='🔑 주제 추천받기';
   }
@@ -4070,11 +4421,21 @@ async function generateKeyword() {
 
 async function generateShorts() {
   const btn = document.getElementById('shorts-btn');
-  const result = document.getElementById('shorts-result');
+  const list = document.getElementById('shorts-list');
   const count = document.getElementById('shorts-count').value;
   btn.disabled=true; btn.textContent='⏳ 생성 중... (1-2분 소요)';
   btn.style.background='#6b7280';
-  result.innerHTML='<div class="loading"><div class="spinner"></div>숏츠 '+count+'개 생성 중...</div>';
+
+  const loadingId = 'loading-' + Date.now();
+  const loadingCard = document.createElement('div');
+  loadingCard.id = loadingId;
+  loadingCard.className = 'loading';
+  loadingCard.style.cssText = 'border:1px solid #f3f4f6;border-radius:12px;padding:20px;margin-bottom:12px';
+  loadingCard.innerHTML = `<div class="spinner"></div>숏츠 ${count}개 생성 중...`;
+  list.insertBefore(loadingCard, list.firstChild);
+  list.querySelectorAll('.result-empty').forEach(e=>e.remove());
+
+  const now = new Date().toLocaleTimeString('ko-KR', {hour:'2-digit',minute:'2-digit'});
 
   try {
     const r = await fetch('/api/content_ai/shorts_batch',{
@@ -4085,32 +4446,47 @@ async function generateShorts() {
     if (!d.success) throw new Error(d.error);
     const shorts = d.data.shorts || [];
 
-    result.innerHTML = `
-      <div style="margin-bottom:12px;font-size:13px;color:#6b7280">총 ${shorts.length}개 생성 완료</div>
-      <div class="rec-cards">
-        ${shorts.map(s=>`
-          <div class="rec-card">
+    const card = document.createElement('div');
+    card.style.cssText = 'border:1px solid #f3f4f6;border-radius:12px;padding:20px;margin-bottom:16px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.04)';
+    const sUid = Date.now();
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <span class="badge" style="font-size:12px">숏츠 ${shorts.length}개</span>
+          <span style="font-size:11px;color:#9ca3af">${now}</span>
+        </div>
+        <button onclick="this.closest('div[style]').remove();updateCount('shorts')" style="font-size:13px;color:#9ca3af;border:none;background:none;cursor:pointer">✕</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        ${shorts.map((s,i)=>`
+          <div style="background:#fafafa;border-radius:8px;padding:14px">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-              <span class="rec-num">${s.id}</span>
-              <span class="pcat ${s.category?.includes('눈')?'eye':s.category?.includes('코')?'nose':'lifting'}">${s.category||''}</span>
-              <span style="font-size:11px;color:#9ca3af">${s.angle||''}</span>
+              <span style="background:#C9956C;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${s.id||i+1}</span>
+              <span class="pcat ${(s.category||'').includes('눈')?'eye':(s.category||'').includes('코')?'nose':'lifting'}" style="font-size:11px">${s.category||''}</span>
+              <span style="font-size:13px;font-weight:700;color:#1A1A1A">${s.title||''}</span>
             </div>
-            <div class="rec-title">${s.title||''}</div>
-            <div class="rec-hook">${s.hook||''}</div>
-            <div class="script-toggle" onclick="toggleScript(this)">▶ 30초 대본 보기</div>
-            <div class="rec-script">${(s.script_30sec||'').replace(/[/]/g,' <span style="color:#C9956C;font-weight:700">/</span> ')}</div>
-            <div class="hashtags" style="margin-top:8px">
-              ${(s.hashtags||[]).map(h=>`<span class="htag" onclick="copyText('${h}')">${h}</span>`).join('')}
+            <div style="font-size:13px;color:#C9956C;font-weight:600;margin-bottom:8px;padding:6px 10px;background:#fff8f5;border-radius:6px">${s.hook||''}</div>
+            <div style="font-size:12px;cursor:pointer;color:#9ca3af;margin-bottom:6px" onclick="const sc=this.nextElementSibling;sc.style.display=sc.style.display==='none'?'block':'none';this.textContent=sc.style.display==='none'?'▶ 대본 보기':'▼ 대본 접기'">▶ 대본 보기</div>
+            <div style="display:none;font-size:12px;background:#fff;border-radius:6px;padding:12px;line-height:2;white-space:pre-wrap;color:#1A1A1A">${(s.script_30sec||'')}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">
+              ${(s.hashtags||[]).map(h=>`<span class="htag" style="font-size:11px" onclick="copyText('${h}')">${h}</span>`).join('')}
             </div>
-            <button class="copy-btn" style="margin-top:10px" onclick="copyText(this.closest('.rec-card').querySelector('.rec-script').textContent)">대본 복사</button>
           </div>`).join('')}
-      </div>`;
+      </div>
+      ${makeStageBar(sUid)}
+    `;
+
+    list.replaceChild(card, document.getElementById(loadingId));
+    updateCount('shorts');
 
     btn.style.background='#16a34a';
     btn.textContent='✅ 생성 완료!';
     setTimeout(()=>{btn.style.background='linear-gradient(135deg,#C9956C,#E8927C)';btn.textContent='⚡ 숏츠 생성';},3000);
   } catch(e) {
-    result.innerHTML=`<div class="result-empty" style="color:#ef4444">오류: ${e.message}</div>`;
+    const errCard = document.createElement('div');
+    errCard.style.cssText = 'border:1px solid #fee2e2;border-radius:12px;padding:16px;margin-bottom:12px;color:#ef4444;font-size:13px';
+    errCard.innerHTML = `오류: ${e.message} <button onclick="this.parentElement.remove()" style="margin-left:8px;border:none;background:none;cursor:pointer;color:#9ca3af">✕</button>`;
+    list.replaceChild(errCard, document.getElementById(loadingId));
     btn.style.background='linear-gradient(135deg,#C9956C,#E8927C)';
     btn.textContent='⚡ 숏츠 생성';
   } finally {
@@ -4321,7 +4697,7 @@ JSON으로만 응답:
 
         client = _ant.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY",""))
         resp = client.messages.create(
-            model="claude-sonnet-4-6", max_tokens=6000,
+            model="claude-sonnet-4-6", max_tokens=4000,
             messages=[{"role":"user","content":prompt}]
         )
         raw = resp.content[0].text.strip()
