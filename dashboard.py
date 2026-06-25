@@ -3447,7 +3447,7 @@ JSON (다른 텍스트 없이):
 }}"""
 
         resp2 = client.messages.create(
-            model="claude-haiku-4-5-20251001", max_tokens=800,
+            model="claude-sonnet-4-6", max_tokens=800,
             messages=[{"role":"user","content":meta_prompt}]
         )
         meta_raw = resp2.content[0].text.strip().replace("```json","").replace("```","").strip()
@@ -3941,7 +3941,7 @@ select,input[type=text]{width:100%;padding:9px 12px;border:1px solid #e5e7eb;bor
         <h3>설정</h3>
         <div class="form-group">
           <label>생성 개수</label>
-          <select id="shorts-count">
+          <select id="shorts-count-select">
             <option value="10">10개</option>
             <option value="5">5개</option>
             <option value="20">20개</option>
@@ -4102,7 +4102,7 @@ async function generateYoutube() {
             ${(data.keywords||[]).map(k=>`<span class="badge">${k}</span>`).join('')}
           </div>
         </div>
-        <button onclick="this.closest('div[style]').remove();updateCount('yt')" style="font-size:13px;color:#9ca3af;border:none;background:none;cursor:pointer;flex-shrink:0">✕</button>
+        <button onclick="this.closest('div[style]').remove();updateCardCount('yt')" style="font-size:13px;color:#9ca3af;border:none;background:none;cursor:pointer;flex-shrink:0">✕</button>
       </div>
 
       <div style="margin-bottom:14px;padding:12px;background:#fafafa;border-radius:8px">
@@ -4195,7 +4195,7 @@ async function generateYoutube() {
 
     // 로딩 카드 교체
     list.replaceChild(card, document.getElementById(loadingId));
-    updateCount('yt');
+    updateCardCount('yt');
 
   } catch(e) {
     const errCard = document.createElement('div');
@@ -4231,7 +4231,7 @@ function setStage(id, idx) {
   });
 }
 
-function updateCount(type) {
+function updateCardCount(type) {
   const map = {yt:'yt-list', face:'face-list', kw:'kw-list', shorts:'shorts-list'};
   const countMap = {yt:'yt-count', face:'face-count', kw:'kw-count', shorts:'shorts-count'};
   const list = document.getElementById(map[type]);
@@ -4291,7 +4291,7 @@ async function generateFace() {
           <span class="badge" style="font-size:12px">${data.face_type||'분석완료'}</span>
           <span style="font-size:11px;color:#9ca3af">${faceMode==='celebrity'?'연예인':'고민형'} · ${now}</span>
         </div>
-        <button onclick="this.closest('div[style]').remove();updateCount('face')" style="font-size:13px;color:#9ca3af;border:none;background:none;cursor:pointer">✕</button>
+        <button onclick="this.closest('div[style]').remove();updateCardCount('face')" style="font-size:13px;color:#9ca3af;border:none;background:none;cursor:pointer">✕</button>
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
@@ -4335,7 +4335,7 @@ async function generateFace() {
     `;
 
     list.replaceChild(card, document.getElementById(loadingId));
-    updateCount('face');
+    updateCardCount('face');
 
   } catch(e) {
     const errCard = document.createElement('div');
@@ -4385,7 +4385,7 @@ async function generateKeyword() {
             <span style="font-size:11px;color:#9ca3af">${recs.length}개 추천 · ${now}</span>
           </div>
         </div>
-        <button onclick="this.closest('div[style]').remove();updateCount('kw')" style="font-size:13px;color:#9ca3af;border:none;background:none;cursor:pointer">✕</button>
+        <button onclick="this.closest('div[style]').remove();updateCardCount('kw')" style="font-size:13px;color:#9ca3af;border:none;background:none;cursor:pointer">✕</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:12px">
         ${recs.map((r,i)=>`
@@ -4407,7 +4407,7 @@ async function generateKeyword() {
     `;
 
     list.replaceChild(card, document.getElementById(loadingId));
-    updateCount('kw');
+    updateCardCount('kw');
 
   } catch(e) {
     const errCard = document.createElement('div');
@@ -4422,7 +4422,7 @@ async function generateKeyword() {
 async function generateShorts() {
   const btn = document.getElementById('shorts-btn');
   const list = document.getElementById('shorts-list');
-  const count = document.getElementById('shorts-count').value;
+  const count = document.getElementById('shorts-count-select').value;
   btn.disabled=true; btn.textContent='⏳ 생성 중... (1-2분 소요)';
   btn.style.background='#6b7280';
 
@@ -4455,7 +4455,7 @@ async function generateShorts() {
           <span class="badge" style="font-size:12px">숏츠 ${shorts.length}개</span>
           <span style="font-size:11px;color:#9ca3af">${now}</span>
         </div>
-        <button onclick="this.closest('div[style]').remove();updateCount('shorts')" style="font-size:13px;color:#9ca3af;border:none;background:none;cursor:pointer">✕</button>
+        <button onclick="this.closest('div[style]').remove();updateCardCount('shorts')" style="font-size:13px;color:#9ca3af;border:none;background:none;cursor:pointer">✕</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px">
         ${shorts.map((s,i)=>`
@@ -4477,7 +4477,7 @@ async function generateShorts() {
     `;
 
     list.replaceChild(card, document.getElementById(loadingId));
-    updateCount('shorts');
+    updateCardCount('shorts');
 
     btn.style.background='#16a34a';
     btn.textContent='✅ 생성 완료!';
