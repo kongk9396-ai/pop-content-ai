@@ -3827,7 +3827,7 @@ CONTENT_AI_HTML = """
 <title>POP 콘텐츠 AI</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:\'Segoe UI\',\'Noto Sans KR\',sans-serif;background:#0f0f1a;color:#fff;min-height:100vh}
+body{font-family:'Segoe UI','Noto Sans KR',sans-serif;background:#0f0f1a;color:#fff;min-height:100vh}
 .header{background:linear-gradient(135deg,#1a1a2e,#16213e);padding:20px 32px;border-bottom:1px solid #2a2a3e}
 .header h1{font-size:20px;font-weight:700;color:#C9956C}
 .header p{font-size:12px;color:#6b7280;margin-top:4px}
@@ -3880,11 +3880,11 @@ select,input[type=text]{width:100%;padding:9px 12px;border-radius:8px;border:1px
   <p>팝성형외과 콘텐츠 자동 생성 시스템</p>
 </div>
 <div class="tabs" id="tabs">
-  <button class="tab on" onclick="sw(\'youtube\',this)">🎬 유튜브 스크립트</button>
-  <button class="tab" onclick="sw(\'shorts\',this)">⚡ 숏츠 10개</button>
-  <button class="tab" onclick="sw(\'face\',this)">👤 얼굴형 분석</button>
-  <button class="tab" onclick="sw(\'keyword\',this)">🔑 키워드 릴스</button>
-  <button class="tab" onclick="sw(\'history\',this);loadHist()">📋 히스토리</button>
+  <button class="tab on" onclick="sw('youtube',this)">🎬 유튜브 스크립트</button>
+  <button class="tab" onclick="sw('shorts',this)">⚡ 숏츠 10개</button>
+  <button class="tab" onclick="sw('face',this)">👤 얼굴형 분석</button>
+  <button class="tab" onclick="sw('keyword',this)">🔑 키워드 릴스</button>
+  <button class="tab" onclick="sw('history',this);loadHist()">📋 히스토리</button>
 </div>
 <div class="layout">
 
@@ -3936,7 +3936,7 @@ select,input[type=text]{width:100%;padding:9px 12px;border-radius:8px;border:1px
     </div>
     <div class="form-group">
       <label class="lbl">이미지</label>
-      <div class="upload-area" onclick="document.getElementById(\'face-img\').click()" id="face-preview">
+      <div class="upload-area" onclick="document.getElementById('face-img').click()" id="face-preview">
         <div>📷</div><div style="font-size:12px;color:#6b7280;margin-top:6px">클릭하여 선택</div>
       </div>
       <input type="file" id="face-img" accept="image/*" style="display:none" onchange="prevFace(this)">
@@ -4009,7 +4009,7 @@ function stageBar(uid) {
   var html='<div class="stage-bar" id="sb_'+uid+'">';
   for(var i=0;i<STAGES.length;i++){
     var cls='sbtn'+(i<idx?' done':i===idx?' cur':'');
-    html+='<button class="'+cls+'" onclick="setSt(\''+uid+'\','+i+')">'+(i<idx?'✓ ':'')+STAGES[i]+'</button>';
+    html+='<button class="'+cls+'" onclick="setSt(''+uid+'','+i+')">'+(i<idx?'✓ ':'')+STAGES[i]+'</button>';
   }
   return html+'</div>';
 }
@@ -4038,7 +4038,7 @@ function addLoading(resId) {
 function addErr(resId, ldId, msg) {
   var div=document.createElement('div');
   div.className='err';
-  div.innerHTML=msg+'<button class="copy-btn" onclick="this.closest(\'.err\').remove()">닫기</button>';
+  div.innerHTML=msg+'<button class="copy-btn" onclick="this.closest('.err').remove()">닫기</button>';
   var ld=document.getElementById(ldId);
   if(ld) ld.replaceWith(div); else document.getElementById(resId).insertBefore(div,document.getElementById(resId).firstChild);
 }
@@ -4064,7 +4064,7 @@ async function genYT() {
     var sfs=(data.shortforms||[]).map(function(s,i){
       return '<div class="sf-card"><div style="font-size:11px;font-weight:700;color:#C9956C;margin-bottom:4px">숏폼 '+(i+1)+'</div>'+(s.hook?'<div style="font-size:12px;color:#e879f9;margin-bottom:6px">'+esc(s.hook)+'</div>':'')+
         '<div id="sf_'+uid+'_'+i+'" style="font-size:11px;line-height:1.9;color:#d1d5db;white-space:pre-wrap">'+esc(s.script||'')+'</div>'+
-        '<button class="copy-btn" style="margin-top:6px" onclick="cp(document.getElementById(\'sf_'+uid+'_'+i+'\').textContent,this)">복사</button></div>';
+        '<button class="copy-btn" style="margin-top:6px" onclick="cp(document.getElementById('sf_'+uid+'_'+i+'').textContent,this)">복사</button></div>';
     }).join('');
     var ml=data.multilang||{};
     var mlHtml='';
@@ -4075,8 +4075,8 @@ async function genYT() {
         mlHtml+='<div class="lang-block"><div style="font-size:12px;font-weight:700;margin-bottom:6px">'+l[1]+' '+l[2]+'</div>'+
           '<div id="lt_'+uid+'_'+l[0]+'" style="font-size:13px;font-weight:600;color:#f3f4f6;margin-bottom:4px">'+esc(ld.title||'')+'</div>'+
           '<div style="font-size:11px;color:#6b7280;margin-bottom:6px">'+esc(ld.thumbnail||'')+'</div>'+
-          '<div>'+((ld.hashtags||'').split(' ').filter(function(h){return h}).map(function(h){return '<span class="htag" onclick="cp(\''+h+'\',null)">'+esc(h)+'</span>'}).join(''))+'</div>'+
-          '<button class="copy-btn" style="margin-top:6px" onclick="cp(document.getElementById(\'lt_'+uid+'_'+l[0]+'\').textContent,this)">제목복사</button></div>';
+          '<div>'+((ld.hashtags||'').split(' ').filter(function(h){return h}).map(function(h){return '<span class="htag" onclick="cp(''+h+'',null)">'+esc(h)+'</span>'}).join(''))+'</div>'+
+          '<button class="copy-btn" style="margin-top:6px" onclick="cp(document.getElementById('lt_'+uid+'_'+l[0]+'').textContent,this)">제목복사</button></div>';
       });
     }
     var card=document.createElement('div'); card.className='card';
@@ -4088,19 +4088,19 @@ async function genYT() {
           (data.angle?'<span class="badge b3">📐 '+esc(data.angle)+'</span>':'')+
           '<span style="font-size:11px;color:#4b5563;margin-left:6px">'+now+'</span>'+
         '</div>'+
-        '<button class="copy-btn" onclick="this.closest(\'.card\').remove()">✕</button>'+
+        '<button class="copy-btn" onclick="this.closest('.card').remove()">✕</button>'+
       '</div>'+
       '<div class="section-title">제목</div>'+
       '<div style="margin-bottom:8px">'+
-        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="background:#3b82f620;color:#60a5fa;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600">SEO</span><span id="tit_'+uid+'" style="font-size:13px;font-weight:600;color:#f3f4f6">'+esc(data.titles&&data.titles.seo||'')+'</span><button class="copy-btn" onclick="cp(document.getElementById(\'tit_'+uid+'\').textContent,this)">복사</button></div>'+
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="background:#3b82f620;color:#60a5fa;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600">SEO</span><span id="tit_'+uid+'" style="font-size:13px;font-weight:600;color:#f3f4f6">'+esc(data.titles&&data.titles.seo||'')+'</span><button class="copy-btn" onclick="cp(document.getElementById('tit_'+uid+'').textContent,this)">복사</button></div>'+
         '<div style="font-size:12px;color:#9ca3af;margin-bottom:2px">'+esc(data.titles&&data.titles.curiosity||'')+'</div>'+
         '<div style="font-size:12px;color:#9ca3af">'+esc(data.titles&&data.titles.empathy||'')+'</div>'+
       '</div>'+
-      '<div style="display:flex;justify-content:space-between;align-items:center"><div class="section-title">대본</div><button class="copy-btn" onclick="cp(document.getElementById(\'lf_'+uid+'\').textContent,this)">전체복사</button></div>'+
+      '<div style="display:flex;justify-content:space-between;align-items:center"><div class="section-title">대본</div><button class="copy-btn" onclick="cp(document.getElementById('lf_'+uid+'').textContent,this)">전체복사</button></div>'+
       '<div class="script-box" id="lf_'+uid+'">'+esc(data.longform||'')+'</div>'+
       (sfs?'<div class="section-title">숏폼 '+(data.shortforms||[]).length+'개</div><div class="sf-grid">'+sfs+'</div>':'')+
       '<div class="section-title">해시태그</div>'+
-      '<div>'+((data.hashtags||[]).map(function(h){return '<span class="htag" onclick="cp(\''+esc(h)+'\',null)">'+esc(h)+'</span>'}).join(''))+'</div>'+
+      '<div>'+((data.hashtags||[]).map(function(h){return '<span class="htag" onclick="cp(''+esc(h)+'',null)">'+esc(h)+'</span>'}).join(''))+'</div>'+
       mlHtml+
       stageBar(uid);
     document.getElementById(ldId).replaceWith(card);
@@ -4130,16 +4130,16 @@ async function genSH() {
           '<span style="font-size:13px;font-weight:600;color:#f3f4f6">'+esc(s.title||'')+'</span>'+
         '</div>'+
         (s.hook?'<div style="font-size:12px;color:#e879f9;margin-bottom:6px;padding:5px 8px;background:#c026d310;border-radius:6px">'+esc(s.hook)+'</div>':'')+
-        '<span class="expand-btn" onclick="var sc=this.nextElementSibling;sc.style.display=sc.style.display===\'none\'?\'block\':\'none\';this.textContent=sc.style.display===\'none\'?\'▶ 대본 보기\':\'▼ 접기\'">▶ 대본 보기</span>'+
+        '<span class="expand-btn" onclick="var sc=this.nextElementSibling;sc.style.display=sc.style.display==='none'?'block':'none';this.textContent=sc.style.display==='none'?'▶ 대본 보기':'▼ 접기'">▶ 대본 보기</span>'+
         '<div class="expandable script-box" id="ss_'+sid+'">'+esc(s.script_30sec||'')+'</div>'+
-        '<div style="margin-top:6px">'+((s.hashtags||[]).map(function(h){return '<span class="htag" onclick="cp(\''+esc(h)+'\',null)" style="font-size:10px">'+esc(h)+'</span>'}).join(''))+'</div>'+
+        '<div style="margin-top:6px">'+((s.hashtags||[]).map(function(h){return '<span class="htag" onclick="cp(''+esc(h)+'',null)" style="font-size:10px">'+esc(h)+'</span>'}).join(''))+'</div>'+
       '</div>';
     }).join('');
     var card=document.createElement('div'); card.className='card';
     card.innerHTML=
       '<div style="display:flex;justify-content:space-between;margin-bottom:12px">'+
         '<div><span class="badge b1">숏츠 '+shorts.length+'개</span><span style="font-size:11px;color:#4b5563;margin-left:6px">'+now+'</span></div>'+
-        '<button class="copy-btn" onclick="this.closest(\'.card\').remove()">✕</button>'+
+        '<button class="copy-btn" onclick="this.closest('.card').remove()">✕</button>'+
       '</div>'+items+stageBar(uid);
     document.getElementById(ldId).replaceWith(card);
     btn.textContent='✅ 완료!'; setTimeout(function(){btn.textContent='⚡ 숏츠 생성'},2000);
@@ -4170,16 +4170,16 @@ async function genFace() {
     card.innerHTML=
       '<div style="display:flex;justify-content:space-between;margin-bottom:12px">'+
         '<div><span class="badge b1">'+esc(data.face_type||'분석완료')+'</span><span style="font-size:11px;color:#4b5563;margin-left:6px">'+now+'</span></div>'+
-        '<button class="copy-btn" onclick="this.closest(\'.card\').remove()">✕</button>'+
+        '<button class="copy-btn" onclick="this.closest('.card').remove()">✕</button>'+
       '</div>'+
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">'+
         '<div style="background:#0f0f1a;border:1px solid #2a2a3e;border-radius:8px;padding:10px"><div style="font-size:10px;font-weight:700;color:#C9956C;margin-bottom:4px">얼굴형</div><div style="font-size:14px;font-weight:700;margin-bottom:4px">'+esc(data.face_type||'')+'</div><div style="font-size:11px;color:#9ca3af">'+esc(data.face_features||'')+'</div></div>'+
         '<div style="background:#0f0f1a;border:1px solid #2a2a3e;border-radius:8px;padding:10px"><div style="font-size:10px;font-weight:700;color:#C9956C;margin-bottom:4px">장점</div><div style="font-size:12px;color:#d1d5db">'+esc(data.strength||'')+'</div></div>'+
       '</div>'+
       '<div class="section-title">30초 릴스 대본</div>'+tlHtml+
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px"><div class="section-title" style="margin-top:0">캡션</div><button class="copy-btn" onclick="cp(document.getElementById(\'cap_'+uid+'\').textContent,this)">복사</button></div>'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px"><div class="section-title" style="margin-top:0">캡션</div><button class="copy-btn" onclick="cp(document.getElementById('cap_'+uid+'').textContent,this)">복사</button></div>'+
       '<div class="script-box" id="cap_'+uid+'">'+esc(data.caption||'')+'</div>'+
-      '<div>'+((data.hashtags||[]).map(function(h){return '<span class="htag" onclick="cp(\''+esc(h)+'\',null)">'+esc(h)+'</span>'}).join(''))+'</div>'+
+      '<div>'+((data.hashtags||[]).map(function(h){return '<span class="htag" onclick="cp(''+esc(h)+'',null)">'+esc(h)+'</span>'}).join(''))+'</div>'+
       stageBar(uid);
     document.getElementById(ldId).replaceWith(card);
   } catch(e){ addErr('face-res',ldId,'오류: '+e.message); }
@@ -4209,16 +4209,16 @@ async function genKW() {
         '</div>'+
         '<div style="font-size:12px;color:#e879f9;margin-bottom:6px;padding:5px 8px;background:#c026d310;border-radius:6px">'+esc(rec.hook||'')+'</div>'+
         '<div style="font-size:12px;color:#9ca3af;margin-bottom:6px">'+((rec.points||[]).map(function(p){return '• '+esc(p)}).join('<br>'))+'</div>'+
-        '<span class="expand-btn" onclick="var sc=this.nextElementSibling;sc.style.display=sc.style.display===\'none\'?\'block\':\'none\';this.textContent=sc.style.display===\'none\'?\'▶ 대본 보기\':\'▼ 접기\'">▶ 30초 대본 보기</span>'+
+        '<span class="expand-btn" onclick="var sc=this.nextElementSibling;sc.style.display=sc.style.display==='none'?'block':'none';this.textContent=sc.style.display==='none'?'▶ 대본 보기':'▼ 접기'">▶ 30초 대본 보기</span>'+
         '<div class="expandable script-box" id="kr_'+rid+'">'+esc(rec.script_30sec||'')+'</div>'+
-        '<div style="margin-top:6px">'+((rec.hashtags||[]).map(function(h){return '<span class="htag" onclick="cp(\''+esc(h)+'\',null)" style="font-size:10px">'+esc(h)+'</span>'}).join(''))+'</div>'+
+        '<div style="margin-top:6px">'+((rec.hashtags||[]).map(function(h){return '<span class="htag" onclick="cp(''+esc(h)+'',null)" style="font-size:10px">'+esc(h)+'</span>'}).join(''))+'</div>'+
       '</div>';
     }).join('');
     var card=document.createElement('div'); card.className='card';
     card.innerHTML=
       '<div style="display:flex;justify-content:space-between;margin-bottom:12px">'+
         '<div><span class="badge b1">'+esc(kw)+'</span><span style="font-size:11px;color:#4b5563;margin-left:6px">'+recs.length+'개 · '+now+'</span></div>'+
-        '<button class="copy-btn" onclick="this.closest(\'.card\').remove()">✕</button>'+
+        '<button class="copy-btn" onclick="this.closest('.card').remove()">✕</button>'+
       '</div>'+items+stageBar(uid);
     document.getElementById(ldId).replaceWith(card);
   } catch(e){ addErr('kw-res',ldId,'오류: '+e.message); }
